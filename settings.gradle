@@ -1,0 +1,4 @@
+rootProject.name = 'http-spec-root'
+include('http-spec-runner')
+
+project(':http-spec-runner').name = 'http-spec-runner'
