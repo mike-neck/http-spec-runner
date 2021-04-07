@@ -6,21 +6,21 @@ import org.jetbrains.annotations.NotNull;
 
 public interface HttpSpecRunner {
 
-    static Builder builder() {
-        throw new UnsupportedOperationException("not implemented");
-    }
+  static Builder builder() {
+    throw new UnsupportedOperationException("not implemented");
+  }
 
-    static HttpSpecRunner from(File yamlFile) {
-        throw new UnsupportedOperationException("not implemented");
-    }
+  static HttpSpecRunner from(File yamlFile) {
+    throw new UnsupportedOperationException("not implemented");
+  }
 
-    void run();
+  void run();
 
-    interface Builder {
+  interface Builder {
 
-        @NotNull
-        HttpSpecRunner build();
+    @NotNull
+    HttpSpecRunner build();
 
-        void addSpec(@NotNull Consumer<@NotNull ? super HttpSpec> configuration);
-    }
+    void addSpec(@NotNull Consumer<@NotNull ? super HttpSpec> configuration);
+  }
 }

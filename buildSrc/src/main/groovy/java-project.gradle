@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'com.diffplug.spotless'
 }
 
 group = 'org.mikeneck.httpspec'
@@ -9,11 +8,17 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    googleJavaFormat
+}
+
 dependencies {
     compileOnlyApi 'org.jetbrains:annotations:20.0.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    googleJavaFormat 'com.google.googlejavaformat:google-java-format:1.9'
 }
 
 java {
@@ -27,6 +32,19 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.named('spotlessApply') {
-    it.group = 'formatter'
+task googleJavaFormat(group: 'formatter') {
+    inputs.files(sourceSets.collect { it.allJava })
+    doLast {
+        javaexec { JavaExecSpec spec ->
+            spec.mainClass.set('com.google.googlejavaformat.java.Main')
+            spec.classpath(configurations.googleJavaFormat)
+            //noinspection GroovyAssignabilityCheck
+            List<String> javaFiles = sourceSets.collect { SourceSet s ->
+                s.allJava.asList() 
+            }.flatten().collect { File f ->
+                f.absoluteFile.toString()
+            }
+            spec.args([['-r'], javaFiles].flatten())
+        }
+    }
 }

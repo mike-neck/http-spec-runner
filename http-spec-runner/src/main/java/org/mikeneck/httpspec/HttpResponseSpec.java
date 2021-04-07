@@ -2,9 +2,9 @@ package org.mikeneck.httpspec;
 
 public interface HttpResponseSpec {
 
-    void status(int expectedHttpStatus);
+  void status(int expectedHttpStatus);
 
-    void header(String expectedHeaderName, String expectedHeaderValue);
+  void header(String expectedHeaderName, String expectedHeaderValue);
 
-    BodyAssertion body(String jsonPath);
+  BodyAssertion body(String jsonPath);
 }
