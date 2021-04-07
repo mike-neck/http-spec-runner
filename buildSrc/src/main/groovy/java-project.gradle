@@ -3,6 +3,8 @@ plugins {
     id 'com.diffplug.spotless'
 }
 
+group = 'org.mikeneck.httpspec'
+
 repositories {
     mavenCentral()
 }
