@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+    id 'com.diffplug.spotless'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnlyApi 'org.jetbrains:annotations:20.0.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+tasks.named('test') {
+    // Use junit platform for unit tests.
+    useJUnitPlatform()
+}
+
+tasks.named('spotlessApply') {
+    it.group = 'formatter'
+}
