@@ -55,7 +55,7 @@ class RestApiTest {
         HttpSpecRunner.Builder builder = HttpSpecRunner.builder();
         builder.addSpec(spec -> {
             spec.name("getting path resource with paging parameters");
-            spec.request.get("http://localhost:8080/path", request -> {
+            spec.request().get("http://localhost:8080/path", request -> {
                     request.query("q", "test");
                     request.query("page", 4);
                     request.query("limit", 10);
