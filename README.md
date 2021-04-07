@@ -74,4 +74,30 @@ class RestApiTest {
 }
 ```
 
+junit-jupiter module
+---
 
+T.B.D.
+
+With junit-jupiter module, you can convert `HttpSpecRunner` into `Stream<DynamicTest>`.
+
+```java
+import java.util.stream.Stream;
+
+class RestApiTest {
+    // With junit-jupiter module, you can use httpSpecRunner as dynamic tests.
+    @TestFactory
+    Stream<DynamicTest> asDynamicTests() {
+        HttpSpecRunner.Builder builder = HttpSpecRunner.builder();
+
+        // same as the code in runRequestByJavaCode
+
+        HttpSpecRunner httpSpecRunner = builder.build();
+        // converts each assertion to dynamicTest
+        //    - http status to be 200
+        //    - content-type header to be application/json
+        //    - body json has element $.firstName to be John 
+        return DynamicTestAdapter.adapt(httpSpecRunner);
+    }
+}
+```
