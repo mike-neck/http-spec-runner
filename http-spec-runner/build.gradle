@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     testImplementation 'com.github.tomakehurst:wiremock-jre8:2.27.2'
+    testImplementation 'org.assertj:assertj-core:3.19.0'
 }
