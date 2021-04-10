@@ -1,10 +1,13 @@
 package org.mikeneck.httpspec;
 
+import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
+
 public interface HttpResponseSpec {
 
   void status(int expectedHttpStatus);
 
   void header(String expectedHeaderName, String expectedHeaderValue);
 
-  BodyAssertion body(String jsonPath);
+  void jsonBody(@NotNull Consumer<@NotNull JsonBody> jsonContentsTest);
 }

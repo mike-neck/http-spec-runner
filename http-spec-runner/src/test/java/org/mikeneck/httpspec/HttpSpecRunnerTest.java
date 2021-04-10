@@ -57,7 +57,7 @@ class HttpSpecRunnerTest {
               response -> {
                 response.status(200);
                 response.header("content-type", "application/json");
-                response.body("$.firstName").toBe("John");
+                response.jsonBody(jsonBody -> jsonBody.path("$.firstName").toBe("John"));
               });
         });
     HttpSpecRunner httpSpecRunner = builder.build();
