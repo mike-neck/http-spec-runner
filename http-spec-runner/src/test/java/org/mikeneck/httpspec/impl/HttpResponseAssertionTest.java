@@ -9,25 +9,25 @@ public class HttpResponseAssertionTest {
 
   @Test
   void success() {
-    HttpResponseAssertion<Integer> httpResponseAssertion = new HttpResponseAssertion<>(200);
+    HttpResponseAssertion<Integer> httpResponseAssertion = HttpResponseAssertion.success(200);
     assertAll(
         () -> assertThat(httpResponseAssertion.expected()).isEqualTo(200),
         () -> assertThat(httpResponseAssertion.actual()).isEqualTo(200),
         () ->
             assertThat(httpResponseAssertion.description())
                 .isEqualTo("expected: 200\nactual : 200"),
-        () -> assertThat(httpResponseAssertion).isEqualTo(new HttpResponseAssertion<>(200)));
+        () -> assertThat(httpResponseAssertion).isEqualTo(HttpResponseAssertion.success(200)));
   }
 
   @Test
   void failure() {
-    HttpResponseAssertion<Integer> httpResponseAssertion = new HttpResponseAssertion<>(200, 404);
+    HttpResponseAssertion<Integer> httpResponseAssertion = HttpResponseAssertion.failure(200, 404);
     assertAll(
         () -> assertThat(httpResponseAssertion.expected()).isEqualTo(200),
         () -> assertThat(httpResponseAssertion.actual()).isEqualTo(404),
         () ->
             assertThat(httpResponseAssertion.description())
                 .isEqualTo("expected: 200\nactual : 404"),
-        () -> assertThat(httpResponseAssertion).isNotEqualTo(new HttpResponseAssertion<>(200)));
+        () -> assertThat(httpResponseAssertion).isNotEqualTo(HttpResponseAssertion.success(200)));
   }
 }
