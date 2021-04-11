@@ -15,7 +15,8 @@ public class HttpResponseAssertionTest {
         () -> assertThat(httpResponseAssertion.actual()).isEqualTo(200),
         () ->
             assertThat(httpResponseAssertion.description())
-                .isEqualTo("expected: 200\nactual : 200"));
+                .isEqualTo("expected: 200\nactual : 200"),
+        () -> assertThat(httpResponseAssertion).isEqualTo(new HttpResponseAssertion<>(200)));
   }
 
   @Test
@@ -26,6 +27,7 @@ public class HttpResponseAssertionTest {
         () -> assertThat(httpResponseAssertion.actual()).isEqualTo(404),
         () ->
             assertThat(httpResponseAssertion.description())
-                .isEqualTo("expected: 200\nactual : 404"));
+                .isEqualTo("expected: 200\nactual : 404"),
+        () -> assertThat(httpResponseAssertion).isNotEqualTo(new HttpResponseAssertion<>(200)));
   }
 }

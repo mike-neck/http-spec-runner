@@ -32,4 +32,27 @@ public class HttpResponseAssertion<@NotNull T> {
   public String description() {
     return String.format("expected: %s\nactual : %s", expected(), actual());
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof HttpResponseAssertion)) return false;
+    HttpResponseAssertion<?> that = (HttpResponseAssertion<?>) o;
+    return expected.equals(that.expected) && Objects.equals(actual, that.actual);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(expected, actual);
+  }
+
+  @Override
+  public String toString() {
+    @SuppressWarnings("StringBufferReplaceableByString")
+    final StringBuilder sb = new StringBuilder("HttpResponseAssertion{");
+    sb.append("expected=").append(expected);
+    sb.append(", actual=").append(actual);
+    sb.append('}');
+    return sb.toString();
+  }
 }
