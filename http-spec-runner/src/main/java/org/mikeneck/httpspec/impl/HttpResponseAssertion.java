@@ -2,24 +2,32 @@ package org.mikeneck.httpspec.impl;
 
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface HttpResponseAssertion<@NotNull T> {
 
   @NotNull
   T expected();
 
-  @NotNull
+  @Nullable
   T actual();
 
   @NotNull
   String description();
 
+  @NotNull
   static <@NotNull T> HttpResponseAssertion<T> success(@NotNull T expected) {
     return new Success<>(expected);
   }
 
+  @NotNull
   static <@NotNull T> HttpResponseAssertion<T> failure(@NotNull T expected, @NotNull T actual) {
     return new Failure<>(expected, actual);
+  }
+
+  @NotNull
+  static <@NotNull T> HttpResponseAssertion<T> exception(@NotNull T expected, Throwable throwable) {
+    return new ExceptionOccurred<>(expected, throwable);
   }
 
   class Success<@NotNull T> implements HttpResponseAssertion<T> {
@@ -120,6 +128,32 @@ public interface HttpResponseAssertion<@NotNull T> {
       sb.append(", actual=").append(actual);
       sb.append('}');
       return sb.toString();
+    }
+  }
+
+  class ExceptionOccurred<@NotNull T> implements HttpResponseAssertion<T> {
+
+    private final @NotNull T expected;
+    private @NotNull final Throwable throwable;
+
+    public ExceptionOccurred(@NotNull T expected, @NotNull Throwable throwable) {
+      this.expected = expected;
+      this.throwable = throwable;
+    }
+
+    @Override
+    public @NotNull T expected() {
+      return expected;
+    }
+
+    @Override
+    public @Nullable T actual() {
+      return null;
+    }
+
+    @Override
+    public @NotNull String description() {
+      return String.format("expected: %s\nbut exception: %s", expected, throwable.toString());
     }
   }
 }
