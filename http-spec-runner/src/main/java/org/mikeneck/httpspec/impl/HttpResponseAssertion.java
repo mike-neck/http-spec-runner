@@ -21,7 +21,7 @@ public interface HttpResponseAssertion<@NotNull T> {
   }
 
   @NotNull
-  static <@NotNull T> HttpResponseAssertion<T> failure(@NotNull T expected, @NotNull T actual) {
+  static <@NotNull T> HttpResponseAssertion<T> failure(@NotNull T expected, @Nullable T actual) {
     return new Failure<>(expected, actual);
   }
 
@@ -30,12 +30,19 @@ public interface HttpResponseAssertion<@NotNull T> {
     return new ExceptionOccurred<>(expected, throwable);
   }
 
+  boolean isSuccess();
+
   class Success<@NotNull T> implements HttpResponseAssertion<T> {
 
     private final @NotNull T expected;
 
     Success(@NotNull T expected) {
       this.expected = expected;
+    }
+
+    @Override
+    public boolean isSuccess() {
+      return true;
     }
 
     @Override
@@ -82,11 +89,16 @@ public interface HttpResponseAssertion<@NotNull T> {
   class Failure<@NotNull T> implements HttpResponseAssertion<T> {
 
     private final @NotNull T expected;
-    private final @NotNull T actual;
+    private final @Nullable T actual;
 
-    Failure(@NotNull T expected, @NotNull T actual) {
+    Failure(@NotNull T expected, @Nullable T actual) {
       this.expected = expected;
       this.actual = actual;
+    }
+
+    @Override
+    public boolean isSuccess() {
+      return false;
     }
 
     @Override
@@ -96,9 +108,9 @@ public interface HttpResponseAssertion<@NotNull T> {
     }
 
     @Override
-    @NotNull
+    @Nullable
     public T actual() {
-      return Objects.requireNonNullElse(actual, expected);
+      return actual;
     }
 
     @Override
@@ -110,9 +122,9 @@ public interface HttpResponseAssertion<@NotNull T> {
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
-      if (!(o instanceof HttpResponseAssertion.Failure)) return false;
-      Failure<?> that = (Failure<?>) o;
-      return expected.equals(that.expected) && Objects.equals(actual, that.actual);
+      if (!(o instanceof Failure)) return false;
+      Failure<?> failure = (Failure<?>) o;
+      return expected.equals(failure.expected) && Objects.equals(actual, failure.actual);
     }
 
     @Override
@@ -139,6 +151,11 @@ public interface HttpResponseAssertion<@NotNull T> {
     public ExceptionOccurred(@NotNull T expected, @NotNull Throwable throwable) {
       this.expected = expected;
       this.throwable = throwable;
+    }
+
+    @Override
+    public boolean isSuccess() {
+      return false;
     }
 
     @Override
