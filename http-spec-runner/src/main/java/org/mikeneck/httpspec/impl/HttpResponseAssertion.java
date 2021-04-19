@@ -1,5 +1,7 @@
 package org.mikeneck.httpspec.impl;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,9 +17,28 @@ public interface HttpResponseAssertion<@NotNull T> {
   @NotNull
   String description();
 
+  boolean isSuccess();
+
   @NotNull
   static <@NotNull T> HttpResponseAssertion<T> success(@NotNull T expected) {
     return new Success<>(expected);
+  }
+
+  @NotNull
+  @SafeVarargs
+  static <@NotNull T> HttpResponseAssertion<Collection<T>> itemFoundInCollection(
+      @NotNull T item, @NotNull T... collection) {
+    return itemFoundInCollection(item, List.of(collection));
+  }
+
+  @NotNull
+  static <@NotNull T> HttpResponseAssertion<Collection<T>> itemFoundInCollection(
+      @NotNull T item, @NotNull Collection<@NotNull T> collection) {
+    return new ItemFoundInCollection<>(item, collection);
+  }
+
+  static <@NotNull T> HttpResponseAssertion<T> success(T expected, Collection<T> actualItems) {
+    return null;
   }
 
   @NotNull
@@ -29,8 +50,6 @@ public interface HttpResponseAssertion<@NotNull T> {
   static <@NotNull T> HttpResponseAssertion<T> exception(@NotNull T expected, Throwable throwable) {
     return new ExceptionOccurred<>(expected, throwable);
   }
-
-  boolean isSuccess();
 
   class Success<@NotNull T> implements HttpResponseAssertion<T> {
 
@@ -83,6 +102,60 @@ public interface HttpResponseAssertion<@NotNull T> {
       sb.append("expected=").append(expected);
       sb.append('}');
       return sb.toString();
+    }
+  }
+
+  class ItemFoundInCollection<@NotNull T> implements HttpResponseAssertion<Collection<T>> {
+
+    private final @NotNull T item;
+    private final @NotNull Collection<T> collection;
+
+    public ItemFoundInCollection(@NotNull T item, @NotNull Collection<T> collection) {
+      this.item = item;
+      this.collection = collection;
+    }
+
+    @Override
+    public @NotNull Collection<T> expected() {
+      return List.of(item);
+    }
+
+    @Override
+    public @Nullable Collection<T> actual() {
+      return collection;
+    }
+
+    @Override
+    public @NotNull String description() {
+      return String.format("expected: to contain '%s'\nactual : %s", item, collection);
+    }
+
+    @Override
+    public boolean isSuccess() {
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      @SuppressWarnings("StringBufferReplaceableByString")
+      final StringBuilder sb = new StringBuilder("ItemFoundInCollection{");
+      sb.append("item=").append(item);
+      sb.append(", collection=").append(collection);
+      sb.append('}');
+      return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof ItemFoundInCollection)) return false;
+      ItemFoundInCollection<?> that = (ItemFoundInCollection<?>) o;
+      return item.equals(that.item) && collection.equals(that.collection);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(item, collection);
     }
   }
 
