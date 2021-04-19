@@ -15,7 +15,7 @@ public class HttpStatusSpec implements HttpElementSpec {
 
   @Override
   @NotNull
-  public HttpResponseAssertion<Integer> apply(@NotNull HttpResponse<byte[]> httpResponse) {
+  public HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse) {
     int actualStatusCode = httpResponse.statusCode();
     if (actualStatusCode == expectedStatusCode) {
       return HttpResponseAssertion.success(expectedStatusCode);

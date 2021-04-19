@@ -8,11 +8,11 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 
-class Multimap {
+public class Multimap {
 
   @NotNull final Map<@NotNull String, @NotNull List<String>> map;
 
-  Multimap() {
+  public Multimap() {
     this(new HashMap<>());
   }
 
@@ -20,7 +20,7 @@ class Multimap {
     this.map = map;
   }
 
-  void add(@NotNull String name, @NotNull String value) {
+  public void add(@NotNull String name, @NotNull String value) {
     this.map.compute(
         name,
         (key, mayList) -> {
