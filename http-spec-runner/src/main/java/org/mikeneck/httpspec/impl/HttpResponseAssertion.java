@@ -37,10 +37,6 @@ public interface HttpResponseAssertion<@NotNull T> {
     return new ItemFoundInCollection<>(item, collection);
   }
 
-  static <@NotNull T> HttpResponseAssertion<T> success(T expected, Collection<T> actualItems) {
-    return null;
-  }
-
   @NotNull
   static <@NotNull T> HttpResponseAssertion<T> failure(@NotNull T expected, @Nullable T actual) {
     return new Failure<>(expected, actual);
