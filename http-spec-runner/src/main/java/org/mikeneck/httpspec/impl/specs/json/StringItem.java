@@ -4,11 +4,11 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 
-public class StringItem implements JsonItem {
+class StringItem implements JsonItem {
 
   @NotNull private final String value;
 
-  public StringItem(@NotNull String value) {
+  StringItem(@NotNull String value) {
     this.value = value;
   }
 

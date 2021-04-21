@@ -5,11 +5,11 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 
-public class ObjectItem implements JsonItem {
+class ObjectItem implements JsonItem {
 
   @NotNull private final Map<@NotNull String, @NotNull JsonItem> object;
 
-  public ObjectItem(@NotNull Map<@NotNull String, @NotNull JsonItem> object) {
+  ObjectItem(@NotNull Map<@NotNull String, @NotNull JsonItem> object) {
     this.object = object;
   }
 

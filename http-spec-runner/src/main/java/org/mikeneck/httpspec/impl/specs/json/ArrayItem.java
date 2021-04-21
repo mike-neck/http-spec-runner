@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 
-public class ArrayItem implements JsonItem {
+class ArrayItem implements JsonItem {
 
   @NotNull private final List<@NotNull JsonItem> items;
 

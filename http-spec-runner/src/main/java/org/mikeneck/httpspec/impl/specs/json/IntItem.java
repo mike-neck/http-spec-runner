@@ -3,11 +3,11 @@ package org.mikeneck.httpspec.impl.specs.json;
 import java.util.Objects;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 
-public class IntItem implements JsonItem {
+class IntItem implements JsonItem {
 
   private final long value;
 
-  public IntItem(long value) {
+  IntItem(long value) {
     this.value = value;
   }
 
