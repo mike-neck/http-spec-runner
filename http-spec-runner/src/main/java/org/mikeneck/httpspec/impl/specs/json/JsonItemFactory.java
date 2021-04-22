@@ -27,6 +27,9 @@ public interface JsonItemFactory {
     } else if (node.isDouble()) {
       double value = node.asDouble(0.0d);
       return doubleItem(value);
+    } else if (node.isBoolean()) {
+      boolean value = node.asBoolean();
+      return booleanItem(value);
     } else if (node.isArray()) {
       return arrayItem((ArrayNode) node);
     } else if (node.isObject()) {
@@ -48,6 +51,15 @@ public interface JsonItemFactory {
   @NotNull
   static DoubleItem doubleItem(double value) {
     return new DoubleItem(value);
+  }
+
+  @NotNull
+  static JsonItem booleanItem(boolean value) {
+    if (value) {
+      return BooleanItem.TRUE;
+    } else {
+      return BooleanItem.FALSE;
+    }
   }
 
   @NotNull
@@ -96,6 +108,8 @@ public interface JsonItemFactory {
       return intItem(((Number) object).longValue());
     } else if (object instanceof Double || object instanceof Float) {
       return doubleItem(((Number) object).doubleValue());
+    } else if (object instanceof Boolean) {
+      return booleanItem((Boolean) object);
     } else if (object instanceof Collection) {
       Collection<?> list = (Collection<?>) object;
       List<JsonItem> items = new ArrayList<>(list.size());

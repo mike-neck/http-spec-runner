@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.DoubleNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.LongNode;
@@ -49,6 +50,13 @@ public class JsonItemFactoryTest {
     assertThat(item).isInstanceOf(DoubleItem.class);
   }
 
+  @Test
+  void booleanItem() {
+    JsonNode node = BooleanNode.getTrue();
+    JsonItem item = JsonItemFactory.fromNode(node);
+    assertThat(item).isInstanceOf(BooleanItem.class);
+  }
+
   final ObjectMapper objectMapper = new ObjectMapper();
 
   @Test
@@ -86,6 +94,9 @@ public class JsonItemFactoryTest {
         test("fromObject(double) -> DoubleItem")
             .jsonItem(JsonItemFactory.fromObject(10.2))
             .toBeInstanceOf(DoubleItem.class),
+        test("fromObject(boolean) -> BooleanItem")
+            .jsonItem(JsonItemFactory.fromObject(Boolean.FALSE))
+            .toBeInstanceOf(BooleanItem.class),
         test("fromObject(Collection) -> ArrayItem")
             .jsonItem(JsonItemFactory.fromObject(Set.of(1, 2, 4)))
             .toBeInstanceOf(ArrayItem.class),
