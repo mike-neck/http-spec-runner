@@ -3,12 +3,14 @@ package org.mikeneck.httpspec.impl.specs.json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 
@@ -70,11 +72,56 @@ public interface JsonItemFactory {
           Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
           return Objects.requireNonNullElse(iterator, Collections.emptyIterator());
         };
-    Map<String, JsonItem> object = new LinkedHashMap<>(node.size());
-    for (Map.Entry<String, JsonNode> item : items) {
-      JsonItem value = fromNode(item.getValue());
+    return objectItem(node.size(), items, JsonItemFactory::fromNode);
+  }
+
+  @NotNull
+  private static <T> ObjectItem objectItem(
+      int size,
+      Iterable<Map.Entry<String, T>> items,
+      Function<? super T, ? extends JsonItem> converter) {
+    Map<String, JsonItem> object = new LinkedHashMap<>(size);
+    for (Map.Entry<String, T> item : items) {
+      JsonItem value = converter.apply(item.getValue());
       object.put(item.getKey(), value);
     }
     return new ObjectItem(object);
+  }
+
+  @NotNull
+  static JsonItem fromObject(@NotNull Object object) {
+    if (object instanceof String) {
+      return stringItem(((String) object));
+    } else if (object instanceof Long || object instanceof Integer) {
+      return intItem(((Number) object).longValue());
+    } else if (object instanceof Double || object instanceof Float) {
+      return doubleItem(((Number) object).doubleValue());
+    } else if (object instanceof Collection) {
+      Collection<?> list = (Collection<?>) object;
+      List<JsonItem> items = new ArrayList<>(list.size());
+      for (Object o : list) {
+        items.add(fromObject(o));
+      }
+      return new ArrayItem(List.copyOf(items));
+    } else if (object instanceof Map) {
+      Map<?, ?> map = (Map<?, ?>) object;
+      int size = map.size();
+      return objectItem(map, size);
+    }
+    throw new IllegalArgumentException("unsupported type " + object);
+  }
+
+  @NotNull
+  private static JsonItem objectItem(Map<?, ?> map, int size) {
+    Map<String, JsonItem> items = new LinkedHashMap<>(size);
+
+    for (Map.Entry<?, ?> item : map.entrySet()) {
+      items.put(item.getKey().toString(), fromObject(item.getValue()));
+    }
+    return new ObjectItem(Collections.unmodifiableMap(items));
+  }
+
+  static JsonItem objectItem(@NotNull Map<@NotNull String, @NotNull Object> object) {
+    return objectItem(object, object.size());
   }
 }

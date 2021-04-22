@@ -7,11 +7,6 @@ import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 public interface JsonItem {
 
   @NotNull
-  default HttpResponseAssertion<?> testJson(@NotNull String body, @NotNull JsonPathReader reader) {
-    return testJson(() -> reader.readJson(body));
-  }
-
-  @NotNull
   default HttpResponseAssertion<?> testJson(@NotNull JsonPathProduct jsonPathProduct) {
     Optional<JsonItem> optional = jsonPathProduct.get();
     if (optional.isEmpty()) {

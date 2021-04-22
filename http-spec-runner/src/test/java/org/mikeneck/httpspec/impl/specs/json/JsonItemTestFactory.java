@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DynamicTest;
 import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
+import org.mikeneck.httpspec.impl.specs.JsonPathProduct;
 
 public class JsonItemTestFactory<T extends JsonItem> {
 
@@ -38,10 +39,24 @@ public class JsonItemTestFactory<T extends JsonItem> {
         .flatMap(Supplier::get);
   }
 
+  private static JsonPathProduct jsonPathProduct(
+      @NotNull Supplier<@NotNull Optional<@NotNull JsonItem>> reader) {
+    return new JsonPathProduct() {
+      @Override
+      public @NotNull String path() {
+        return "test-path";
+      }
+
+      @Override
+      public @NotNull Optional<@NotNull JsonItem> get() {
+        return reader.get();
+      }
+    };
+  }
+
   private Supplier<Stream<DynamicTest>> empty() {
     return () -> {
-      @SuppressWarnings("NullableProblems")
-      HttpResponseAssertion<?> assertion = target.testJson(Optional::empty);
+      HttpResponseAssertion<?> assertion = target.testJson(jsonPathProduct(Optional::empty));
 
       return Stream.of(
           dynamicTest(
@@ -58,7 +73,8 @@ public class JsonItemTestFactory<T extends JsonItem> {
 
   private Supplier<Stream<DynamicTest>> differentType() {
     return () -> {
-      HttpResponseAssertion<?> assertion = target.testJson(() -> Optional.of(differentType));
+      HttpResponseAssertion<?> assertion =
+          target.testJson(jsonPathProduct(() -> Optional.of(differentType)));
 
       return Stream.of(
           dynamicTest(
@@ -75,7 +91,8 @@ public class JsonItemTestFactory<T extends JsonItem> {
 
   private Supplier<Stream<DynamicTest>> differentValue() {
     return () -> {
-      HttpResponseAssertion<?> assertion = target.testJson(() -> Optional.of(differentValue));
+      HttpResponseAssertion<?> assertion =
+          target.testJson(jsonPathProduct(() -> Optional.of(differentValue)));
 
       return Stream.of(
           dynamicTest(
@@ -92,7 +109,8 @@ public class JsonItemTestFactory<T extends JsonItem> {
 
   private Supplier<Stream<DynamicTest>> sameValue() {
     return () -> {
-      HttpResponseAssertion<?> assertion = target.testJson(() -> Optional.of(sameValue));
+      HttpResponseAssertion<?> assertion =
+          target.testJson(jsonPathProduct(() -> Optional.of(sameValue)));
 
       return Stream.of(
           dynamicTest(
