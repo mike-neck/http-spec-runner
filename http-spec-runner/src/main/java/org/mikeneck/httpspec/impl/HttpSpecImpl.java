@@ -7,7 +7,7 @@ import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpResponseSpec;
 import org.mikeneck.httpspec.HttpSpec;
 
-public class HttpSpecBuilder implements HttpSpec {
+public class HttpSpecImpl implements HttpSpec {
   @Override
   public void name(@NotNull String specName) {}
 

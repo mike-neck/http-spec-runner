@@ -9,11 +9,11 @@ import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpSpec;
 
-class HttpSpecBuilderTest {
+class HttpSpecImplTest {
 
   @Test
   void requestReturnsHttpRequestMethodSpec() {
-    HttpSpecBuilder builder = new HttpSpecBuilder();
+    HttpSpecImpl builder = new HttpSpecImpl();
     HttpRequestMethodSpec httpRequestMethodSpec = ((HttpSpec) builder).request();
     assertThat(httpRequestMethodSpec).isNotNull();
   }
@@ -21,7 +21,7 @@ class HttpSpecBuilderTest {
   @Test
   void httpRequestSpecInGetMethodWillConfigured() {
     List<HttpRequestSpec> specs = new ArrayList<>();
-    HttpSpecBuilder builder = new HttpSpecBuilder();
+    HttpSpecImpl builder = new HttpSpecImpl();
     ((HttpSpec) builder).request().get("http://example.com", specs::add);
     assertThat(specs).hasSize(1);
   }
