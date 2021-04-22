@@ -5,6 +5,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 import javax.net.ssl.SSLSession;
@@ -14,15 +15,24 @@ public class MockHttpResponse implements HttpResponse<byte[]> {
 
   private final int status;
   private final HttpHeaders headers;
+  private final String jsonBody;
 
   public MockHttpResponse(int status) {
     this.status = status;
     this.headers = HttpHeaders.of(Map.of(), (name, value) -> true);
+    this.jsonBody = "";
   }
 
   public MockHttpResponse(@NotNull Multimap multimap) {
     this.status = 200;
     this.headers = HttpHeaders.of(multimap.map, (name, value) -> true);
+    this.jsonBody = "";
+  }
+
+  public MockHttpResponse(@NotNull String jsonBody) {
+    this.status = 200;
+    this.headers = HttpHeaders.of(Map.of(), (name, value) -> true);
+    this.jsonBody = jsonBody;
   }
 
   @Override
@@ -47,7 +57,7 @@ public class MockHttpResponse implements HttpResponse<byte[]> {
 
   @Override
   public byte[] body() {
-    return new byte[0];
+    return jsonBody.getBytes(StandardCharsets.UTF_8);
   }
 
   @Override
