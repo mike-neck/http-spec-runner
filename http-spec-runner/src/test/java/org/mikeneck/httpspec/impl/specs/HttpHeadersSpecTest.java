@@ -99,4 +99,11 @@ class HttpHeadersSpecTest {
 
     assertAll(() -> assertThat(assertion.isSuccess()).isTrue());
   }
+
+  @Test
+  void description() {
+    HttpElementSpec spec = new HttpHeadersSpec("content-type", "application/json");
+    assertThat(spec.description())
+        .isEqualTo("expecting header=content-type value=application/json");
+  }
 }

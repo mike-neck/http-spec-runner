@@ -6,6 +6,8 @@ import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 
 public interface JsonItem {
 
+  String describeValue();
+
   @NotNull
   default HttpResponseAssertion<?> testJson(@NotNull JsonPathProduct jsonPathProduct) {
     Optional<JsonItem> optional = jsonPathProduct.get();

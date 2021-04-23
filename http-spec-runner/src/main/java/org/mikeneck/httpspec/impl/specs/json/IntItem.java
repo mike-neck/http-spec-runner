@@ -12,6 +12,11 @@ class IntItem implements JsonItem {
   }
 
   @Override
+  public String describeValue() {
+    return Long.toString(value);
+  }
+
+  @Override
   public String toString() {
     return "json int[" + value + ']';
   }

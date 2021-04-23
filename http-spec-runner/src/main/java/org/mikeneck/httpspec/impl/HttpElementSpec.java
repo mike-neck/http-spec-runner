@@ -6,4 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public interface HttpElementSpec {
   @NotNull
   HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse);
+
+  @NotNull
+  String description();
 }

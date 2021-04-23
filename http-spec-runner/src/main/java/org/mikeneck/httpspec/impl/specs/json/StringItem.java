@@ -13,6 +13,11 @@ class StringItem implements JsonItem {
   }
 
   @Override
+  public String describeValue() {
+    return value;
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof StringItem)) return false;

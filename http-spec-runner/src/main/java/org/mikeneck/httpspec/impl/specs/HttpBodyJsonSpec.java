@@ -11,8 +11,10 @@ public class HttpBodyJsonSpec implements HttpElementSpec {
 
   @NotNull private final JsonPathReader jsonPathReader;
   @NotNull private final JsonItem expectedValue;
+  @NotNull private final String path;
 
   public HttpBodyJsonSpec(@NotNull String path, @NotNull JsonItem expectedValue) {
+    this.path = path;
     this.jsonPathReader = new JsonPathReaderImpl(path);
     this.expectedValue = expectedValue;
   }
@@ -23,5 +25,10 @@ public class HttpBodyJsonSpec implements HttpElementSpec {
     String body = new String(bytes, StandardCharsets.UTF_8);
     JsonPathProduct jsonPathProduct = jsonPathReader.read(body);
     return expectedValue.testJson(jsonPathProduct);
+  }
+
+  @Override
+  public @NotNull String description() {
+    return String.format("expecting path=[%s] value=%s", path, expectedValue.describeValue());
   }
 }

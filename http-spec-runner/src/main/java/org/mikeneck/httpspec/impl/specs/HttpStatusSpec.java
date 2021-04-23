@@ -23,4 +23,9 @@ public class HttpStatusSpec implements HttpElementSpec {
       return HttpResponseAssertion.failure(expectedStatusCode, actualStatusCode);
     }
   }
+
+  @Override
+  public @NotNull String description() {
+    return String.format("expecting status=%d", expectedStatusCode);
+  }
 }

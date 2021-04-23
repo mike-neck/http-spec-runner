@@ -15,6 +15,11 @@ class BooleanItem implements JsonItem {
   }
 
   @Override
+  public String describeValue() {
+    return value ? "true" : "false";
+  }
+
+  @Override
   public String toString() {
     return "json item boolean [" + "value=" + value + ']';
   }

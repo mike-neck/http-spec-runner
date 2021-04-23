@@ -38,4 +38,10 @@ class HttpStatusSpecTest {
 
     assertThat(result).isEqualTo(HttpResponseAssertion.failure(200, 404));
   }
+
+  @Test
+  void description() {
+    HttpStatusSpec spec = new HttpStatusSpec(200);
+    assertThat(spec.description()).isEqualTo("expecting status=200");
+  }
 }

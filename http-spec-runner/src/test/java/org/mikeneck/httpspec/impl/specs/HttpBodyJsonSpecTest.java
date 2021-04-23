@@ -107,4 +107,11 @@ class HttpBodyJsonSpecTest {
             assertThat(assertion.actual())
                 .isEqualTo(JsonItemFactory.arrayItemOfString("James", "Johnson")));
   }
+
+  @Test
+  void description() {
+    HttpBodyJsonSpec httpBodyJsonSpec =
+        new HttpBodyJsonSpec("$.name", JsonItemFactory.stringItem("John"));
+    assertThat(httpBodyJsonSpec.description()).isEqualTo("expecting path=[$.name] value=John");
+  }
 }

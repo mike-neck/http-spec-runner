@@ -15,6 +15,11 @@ class ArrayItem implements JsonItem {
     this.items = items;
   }
 
+  @Override
+  public String describeValue() {
+    return items.stream().map(JsonItem::describeValue).collect(Collectors.joining(",", "[", "]"));
+  }
+
   @NotNull
   public static ArrayItem ofString(@NotNull String... items) {
     List<JsonItem> list =

@@ -12,6 +12,11 @@ class DoubleItem implements JsonItem {
   }
 
   @Override
+  public String describeValue() {
+    return Double.toString(value);
+  }
+
+  @Override
   public String toString() {
     return "json double[" + value + ']';
   }

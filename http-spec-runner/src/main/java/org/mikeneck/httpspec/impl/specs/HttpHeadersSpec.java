@@ -25,4 +25,10 @@ public class HttpHeadersSpec implements HttpElementSpec {
       return HttpResponseAssertion.failure(httpHeaderItem, null);
     }
   }
+
+  @Override
+  public @NotNull String description() {
+    return String.format(
+        "expecting header=%s value=%s", httpHeaderItem.name(), httpHeaderItem.value());
+  }
 }

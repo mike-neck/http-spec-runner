@@ -2,6 +2,7 @@ package org.mikeneck.httpspec.impl.specs.json;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 
@@ -11,6 +12,13 @@ class ObjectItem implements JsonItem {
 
   ObjectItem(@NotNull Map<@NotNull String, @NotNull JsonItem> object) {
     this.object = object;
+  }
+
+  @Override
+  public String describeValue() {
+    return object.entrySet().stream()
+        .map(entry -> String.format("%s=%s", entry.getKey(), entry.getValue().describeValue()))
+        .collect(Collectors.joining(",", "{", "}"));
   }
 
   @Override
