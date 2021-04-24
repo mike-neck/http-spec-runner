@@ -21,26 +21,33 @@ public class GetRequestBuilder implements HttpRequestSpec {
   }
 
   public HttpRequest build() {
-    String url;
-    if (this.queries.isEmpty()) {
-      url = this.url;
-    } else {
-      url =
-          String.format(
-              "%s?%s",
-              this.url,
-              this.queries
-                  .mapNameAndValue((name, value) -> name + "=" + value)
-                  .collect(Collectors.joining("&")));
-    }
-
-    HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url)).GET();
+    URI uri = buildUri();
+    HttpRequest.Builder builder = HttpRequest.newBuilder(uri).GET();
 
     this.headers
         .nameAndValues()
         .forEach(nameAndValue -> builder.header(nameAndValue.name, nameAndValue.value));
 
     return builder.build();
+  }
+
+  @NotNull
+  URI buildUri() {
+    if (this.queries.isEmpty()) {
+      String url = this.url;
+      return URI.create(url);
+    } else {
+      String url =
+          String.format(
+              "%s?%s",
+              this.url,
+              this.queries
+                  .mapNameAndValue(
+                      (name, value) ->
+                          name + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8))
+                  .collect(Collectors.joining("&")));
+      return URI.create(url);
+    }
   }
 
   @Override
@@ -66,5 +73,10 @@ public class GetRequestBuilder implements HttpRequestSpec {
       headers.add(name, v);
     }
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return "GET " + buildUri();
   }
 }

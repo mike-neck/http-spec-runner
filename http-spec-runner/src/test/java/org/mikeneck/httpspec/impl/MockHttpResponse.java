@@ -35,6 +35,12 @@ public class MockHttpResponse implements HttpResponse<byte[]> {
     this.jsonBody = jsonBody;
   }
 
+  public MockHttpResponse(Multimap multimap, String jsonBody) {
+    this.status = 200;
+    this.headers = HttpHeaders.of(multimap.map, (name, value) -> true);
+    this.jsonBody = jsonBody;
+  }
+
   @Override
   public int statusCode() {
     return status;

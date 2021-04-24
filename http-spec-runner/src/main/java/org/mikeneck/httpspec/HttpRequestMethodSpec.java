@@ -6,4 +6,8 @@ import org.jetbrains.annotations.NotNull;
 public interface HttpRequestMethodSpec {
 
   void get(@NotNull String url, @NotNull Consumer<@NotNull ? super HttpRequestSpec> configuration);
+
+  default void get(@NotNull String url) {
+    get(url, request -> {});
+  }
 }

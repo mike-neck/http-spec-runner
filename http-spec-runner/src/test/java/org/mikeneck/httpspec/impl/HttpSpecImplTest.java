@@ -1,19 +1,29 @@
 package org.mikeneck.httpspec.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpSpec;
+import org.mikeneck.httpspec.ResourceFile;
+import org.mikeneck.httpspec.ResourceFileLoader;
 
+@ExtendWith(ResourceFileLoader.class)
 class HttpSpecImplTest {
+
+  private static final HttpClientProvider HTTP_CLIENT_PROVIDER =
+      () -> new MockHttpClient((request, handler) -> new MockHttpResponse(200));
 
   @Test
   void requestReturnsHttpRequestMethodSpec() {
-    HttpSpecImpl builder = new HttpSpecImpl();
+    HttpSpecImpl builder = new HttpSpecImpl(1);
     HttpRequestMethodSpec httpRequestMethodSpec = ((HttpSpec) builder).request();
     assertThat(httpRequestMethodSpec).isNotNull();
   }
@@ -21,8 +31,199 @@ class HttpSpecImplTest {
   @Test
   void httpRequestSpecInGetMethodWillConfigured() {
     List<HttpRequestSpec> specs = new ArrayList<>();
-    HttpSpecImpl builder = new HttpSpecImpl();
+    HttpSpecImpl builder = new HttpSpecImpl(1);
     ((HttpSpec) builder).request().get("http://example.com", specs::add);
     assertThat(specs).hasSize(1);
+  }
+
+  @Test
+  void callingRunMethodWithoutConfigurationWillFail() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+    assertThatThrownBy(
+            () -> {
+              @SuppressWarnings("unused")
+              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+            })
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("http-spec-1 not configured");
+  }
+
+  @Test
+  void callingRunMethodWithOnlyNameConfigurationWillFail() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+
+    ((HttpSpec) builder).name("http-spec-test-name");
+
+    assertThatThrownBy(
+            () -> {
+              @SuppressWarnings("unused")
+              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+            })
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("http-spec-test-name");
+  }
+
+  @Test
+  void callingRunMethodWithOnlyRequestConfigurationWillFail() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+
+    ((HttpSpec) builder).request().get("https://example.com");
+
+    assertThatThrownBy(
+            () -> {
+              @SuppressWarnings("unused")
+              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+            })
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("GET https://example.com");
+  }
+
+  @Test
+  void callingRunMethodWithOnlyResponseConfigurationWillFail() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+
+    ((HttpSpec) builder).response(response -> response.status(200));
+
+    assertThatThrownBy(
+            () -> {
+              @SuppressWarnings("unused")
+              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+            })
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessageContaining("expecting status=200");
+  }
+
+  @Test
+  void validCallOfRunMethod() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+
+    ((HttpSpec) builder).name("valid-call-of-run-method");
+    ((HttpSpec) builder).request().get("https://example.com");
+    ((HttpSpec) builder).response(response -> response.status(200));
+
+    List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+
+    assertThat(assertions)
+        .hasSize(1)
+        .satisfies(assertion -> assertThat(assertion.isSuccess()).isTrue(), Index.atIndex(0));
+  }
+
+  @Test
+  void validCallOfRunMethodWithoutName() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+
+    ((HttpSpec) builder).request().get("https://example.com");
+    ((HttpSpec) builder).response(response -> response.status(200));
+
+    List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+
+    assertThat(assertions)
+        .hasSize(1)
+        .satisfies(assertion -> assertThat(assertion.isSuccess()).isTrue(), Index.atIndex(0));
+  }
+
+  @Test
+  void sizeOfAssertionsIsEqualToTheSizeOfSpecsInFailure() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+    HttpClientProvider httpClientProvider =
+        () -> new MockHttpClient((request, handler) -> new MockHttpResponse(401));
+
+    ((HttpSpec) builder).name("valid-call-of-run-method");
+    ((HttpSpec) builder).request().get("https://example.com");
+    ((HttpSpec) builder)
+        .response(
+            response -> {
+              response.status(200);
+              response.header("content-type", "plain/text");
+              response.header("x-attr", "foo");
+            });
+
+    List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+
+    assertThat(assertions).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
+  }
+
+  @ResourceFile("json-path-reader-impl-test/read.json")
+  @Test
+  void sizeOfAssertionsIsEqualToTheSizeOfSpecsInSuccess(String jsonBody) {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+    Multimap multimap = new Multimap();
+    multimap.add("CONTENT-TYPE", "application/json");
+    multimap.add("X-ATTR", "foo");
+    HttpClientProvider httpClientProvider =
+        () -> new MockHttpClient((request, handler) -> new MockHttpResponse(multimap, jsonBody));
+
+    ((HttpSpec) builder).name("valid-call-of-run-method");
+    ((HttpSpec) builder).request().get("https://example.com");
+    ((HttpSpec) builder)
+        .response(
+            response -> {
+              response.status(200);
+              response.header("content-type", "application/json");
+              response.header("x-attr", "foo");
+              response.jsonBody(
+                  json -> {
+                    json.path("$.firstName").toBe("John");
+                    json.path("$.lastName").toBe("doe");
+                  });
+            });
+
+    List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+
+    assertThat(assertions).hasSize(5).allMatch(HttpResponseAssertion::isSuccess);
+  }
+
+  @Test
+  void ioExceptionWhileRequest() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+    HttpClientProvider httpClientProvider =
+        () ->
+            new MockHttpClient(
+                (request, handler) -> {
+                  throw new IOException("test error");
+                });
+
+    ((HttpSpec) builder).name("valid-call-of-run-method");
+    ((HttpSpec) builder).request().get("https://example.com");
+    ((HttpSpec) builder)
+        .response(
+            response -> {
+              response.status(200);
+              response.header("content-type", "plain/text");
+              response.header("x-attr", "foo");
+            });
+
+    List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+
+    assertThat(assertions).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
+  }
+
+  @Test
+  void interruptedExceptionWhileRequest() {
+    HttpSpecImpl builder = new HttpSpecImpl(1);
+    HttpClientProvider httpClientProvider =
+        () ->
+            new MockHttpClient(
+                (request, handler) -> {
+                  throw new InterruptedException("test error");
+                });
+
+    ((HttpSpec) builder).name("valid-call-of-run-method");
+    ((HttpSpec) builder).request().get("https://example.com");
+    ((HttpSpec) builder)
+        .response(
+            response -> {
+              response.status(200);
+              response.header("content-type", "plain/text");
+              response.header("x-attr", "foo");
+            });
+
+    assertThatThrownBy(
+            () -> {
+              @SuppressWarnings("unused")
+              List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+            })
+        .isInstanceOf(RuntimeException.class)
+        .hasMessageContaining("interrupted");
   }
 }
