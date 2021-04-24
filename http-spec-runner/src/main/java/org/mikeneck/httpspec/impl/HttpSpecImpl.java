@@ -6,12 +6,13 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.mikeneck.httpspec.HttpExchange;
 import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpResponseSpec;
 import org.mikeneck.httpspec.HttpSpec;
 
-public class HttpSpecImpl implements HttpSpec {
+public class HttpSpecImpl implements HttpSpec, HttpExchange {
 
   private final int id;
   private @NotNull final Specs specs;
@@ -56,10 +57,12 @@ public class HttpSpecImpl implements HttpSpec {
     return request != null;
   }
 
+  @Override
   @UnmodifiableView
-  public List<HttpResponseAssertion<?>> run(@NotNull Client provider) {
+  @NotNull
+  public List<HttpResponseAssertion<?>> run(@NotNull Client client) {
     if (requestSpecConfigured() && specs.isConfigured()) {
-      return specs.httpExchange(request, provider);
+      return specs.httpExchange(request, client);
     }
     throw unconfigured();
   }

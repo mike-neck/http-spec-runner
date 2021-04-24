@@ -23,7 +23,8 @@ public class HttpResponseSpecImpl implements HttpResponseSpec, Iterable<HttpElem
     this.specs = specs;
   }
 
-  @NotNull List<HttpElementSpec> getSpecs() {
+  @NotNull
+  List<HttpElementSpec> getSpecs() {
     return Collections.unmodifiableList(specs);
   }
 
