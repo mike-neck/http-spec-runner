@@ -18,7 +18,7 @@ import org.mikeneck.httpspec.ResourceFileLoader;
 @ExtendWith(ResourceFileLoader.class)
 class HttpSpecImplTest {
 
-  private static final HttpClientProvider HTTP_CLIENT_PROVIDER =
+  private static final Client HTTP_CLIENT_PROVIDER =
       () -> new MockHttpClient((request, handler) -> new MockHttpResponse(200));
 
   @Test
@@ -125,8 +125,7 @@ class HttpSpecImplTest {
   @Test
   void sizeOfAssertionsIsEqualToTheSizeOfSpecsInFailure() {
     HttpSpecImpl builder = new HttpSpecImpl(1);
-    HttpClientProvider httpClientProvider =
-        () -> new MockHttpClient((request, handler) -> new MockHttpResponse(401));
+    Client client = () -> new MockHttpClient((request, handler) -> new MockHttpResponse(401));
 
     ((HttpSpec) builder).name("valid-call-of-run-method");
     ((HttpSpec) builder).request().get("https://example.com");
@@ -138,7 +137,7 @@ class HttpSpecImplTest {
               response.header("x-attr", "foo");
             });
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+    List<HttpResponseAssertion<?>> assertions = builder.run(client);
 
     assertThat(assertions).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
   }
@@ -150,7 +149,7 @@ class HttpSpecImplTest {
     Multimap multimap = new Multimap();
     multimap.add("CONTENT-TYPE", "application/json");
     multimap.add("X-ATTR", "foo");
-    HttpClientProvider httpClientProvider =
+    Client client =
         () -> new MockHttpClient((request, handler) -> new MockHttpResponse(multimap, jsonBody));
 
     ((HttpSpec) builder).name("valid-call-of-run-method");
@@ -168,7 +167,7 @@ class HttpSpecImplTest {
                   });
             });
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+    List<HttpResponseAssertion<?>> assertions = builder.run(client);
 
     assertThat(assertions).hasSize(5).allMatch(HttpResponseAssertion::isSuccess);
   }
@@ -176,7 +175,7 @@ class HttpSpecImplTest {
   @Test
   void ioExceptionWhileRequest() {
     HttpSpecImpl builder = new HttpSpecImpl(1);
-    HttpClientProvider httpClientProvider =
+    Client client =
         () ->
             new MockHttpClient(
                 (request, handler) -> {
@@ -193,7 +192,7 @@ class HttpSpecImplTest {
               response.header("x-attr", "foo");
             });
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+    List<HttpResponseAssertion<?>> assertions = builder.run(client);
 
     assertThat(assertions).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
   }
@@ -201,7 +200,7 @@ class HttpSpecImplTest {
   @Test
   void interruptedExceptionWhileRequest() {
     HttpSpecImpl builder = new HttpSpecImpl(1);
-    HttpClientProvider httpClientProvider =
+    Client client =
         () ->
             new MockHttpClient(
                 (request, handler) -> {
@@ -221,7 +220,7 @@ class HttpSpecImplTest {
     assertThatThrownBy(
             () -> {
               @SuppressWarnings("unused")
-              List<HttpResponseAssertion<?>> assertions = builder.run(httpClientProvider);
+              List<HttpResponseAssertion<?>> assertions = builder.run(client);
             })
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("interrupted");

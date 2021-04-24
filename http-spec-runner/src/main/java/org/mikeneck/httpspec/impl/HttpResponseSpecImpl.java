@@ -2,6 +2,7 @@ package org.mikeneck.httpspec.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ import org.mikeneck.httpspec.JsonBody;
 import org.mikeneck.httpspec.impl.specs.HttpHeadersSpec;
 import org.mikeneck.httpspec.impl.specs.HttpStatusSpec;
 
-public class HttpResponseSpecImpl implements HttpResponseSpec {
+public class HttpResponseSpecImpl implements HttpResponseSpec, Iterable<HttpElementSpec> {
 
   private final List<HttpElementSpec> specs;
 
@@ -43,5 +44,11 @@ public class HttpResponseSpecImpl implements HttpResponseSpec {
     jsonContentsTest.accept(jsonBody);
     List<HttpElementSpec> specs = jsonBody.getSpecs();
     this.specs.addAll(specs);
+  }
+
+  @NotNull
+  @Override
+  public Iterator<HttpElementSpec> iterator() {
+    return specs.iterator();
   }
 }
