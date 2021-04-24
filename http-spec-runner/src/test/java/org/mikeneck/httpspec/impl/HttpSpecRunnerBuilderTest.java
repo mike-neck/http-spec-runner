@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mikeneck.httpspec.HttpSpecRunner;
 
@@ -60,6 +62,16 @@ class HttpSpecRunnerBuilderTest {
     HttpSpecRunner httpSpecRunner = builder.build();
 
     assertThat(httpSpecRunner).isInstanceOf(HttpSpecRunnerImpl.class);
+  }
+
+  @Test
+  void configurationShouldBeExecuted() {
+    HttpSpecRunnerBuilder builder = new HttpSpecRunnerBuilder();
+    List<String> list = new ArrayList<>();
+
+    ((HttpSpecRunner.Builder) builder).addSpec(httpSpec -> list.add(httpSpec.toString()));
+
+    assertThat(list).hasSize(1);
   }
 
   @Test
