@@ -5,14 +5,14 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
-import org.mikeneck.httpspec.HttpExchange;
 import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpResponseSpec;
 import org.mikeneck.httpspec.HttpSpec;
+import org.mikeneck.httpspec.HttpSpecVerifier;
+import org.mikeneck.httpspec.VerificationResult;
 
-public class HttpSpecImpl implements HttpSpec, HttpExchange {
+public class HttpSpecImpl implements HttpSpec, HttpSpecVerifier {
 
   private final int id;
   private @NotNull final Specs specs;
@@ -58,17 +58,21 @@ public class HttpSpecImpl implements HttpSpec, HttpExchange {
   }
 
   @Override
-  @UnmodifiableView
-  @NotNull
-  public List<HttpResponseAssertion<?>> run(@NotNull Client client) {
+  public @NotNull VerificationResult invokeOn(@NotNull Client client) {
     if (requestSpecConfigured() && specs.isConfigured()) {
-      return specs.httpExchange(request, client);
+      @NotNull String specName = this.specName == null ? defaultName() : this.specName;
+      List<HttpResponseAssertion<?>> assertions = specs.httpExchange(request, client);
+      return new VerificationResultImpl(specName, assertions);
     }
     throw unconfigured();
   }
 
+  private @NotNull String defaultName() {
+    return String.format("http-spec-%d", id);
+  }
+
   private RuntimeException unconfigured() {
-    StringBuilder sb = new StringBuilder(String.format("http-spec-%d not configured", id));
+    StringBuilder sb = new StringBuilder(String.format("%s not configured", defaultName()));
     if (specName != null) {
       sb.append('[').append(specName).append(']');
     }

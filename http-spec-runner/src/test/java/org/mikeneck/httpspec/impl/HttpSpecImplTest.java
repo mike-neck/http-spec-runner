@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.assertj.core.data.Index;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.HttpRequestMethodSpec;
@@ -14,6 +13,7 @@ import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.ResourceFile;
 import org.mikeneck.httpspec.ResourceFileLoader;
+import org.mikeneck.httpspec.VerificationResult;
 
 @ExtendWith(ResourceFileLoader.class)
 class HttpSpecImplTest {
@@ -42,7 +42,7 @@ class HttpSpecImplTest {
     assertThatThrownBy(
             () -> {
               @SuppressWarnings("unused")
-              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+              VerificationResult assertions = builder.invokeOn(HTTP_CLIENT_PROVIDER);
             })
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("http-spec-1 not configured");
@@ -57,7 +57,7 @@ class HttpSpecImplTest {
     assertThatThrownBy(
             () -> {
               @SuppressWarnings("unused")
-              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+              VerificationResult verificationResult = builder.invokeOn(HTTP_CLIENT_PROVIDER);
             })
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("http-spec-test-name");
@@ -72,7 +72,7 @@ class HttpSpecImplTest {
     assertThatThrownBy(
             () -> {
               @SuppressWarnings("unused")
-              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+              VerificationResult verificationResult = builder.invokeOn(HTTP_CLIENT_PROVIDER);
             })
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("GET https://example.com");
@@ -87,7 +87,7 @@ class HttpSpecImplTest {
     assertThatThrownBy(
             () -> {
               @SuppressWarnings("unused")
-              List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+              VerificationResult verificationResult = builder.invokeOn(HTTP_CLIENT_PROVIDER);
             })
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining("expecting status=200");
@@ -101,11 +101,12 @@ class HttpSpecImplTest {
     ((HttpSpec) builder).request().get("https://example.com");
     ((HttpSpec) builder).response(response -> response.status(200));
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+    VerificationResult verificationResult = builder.invokeOn(HTTP_CLIENT_PROVIDER);
 
-    assertThat(assertions)
+    assertThat(verificationResult)
         .hasSize(1)
-        .satisfies(assertion -> assertThat(assertion.isSuccess()).isTrue(), Index.atIndex(0));
+        .first()
+        .satisfies(assertion -> assertThat(assertion.isSuccess()).isTrue());
   }
 
   @Test
@@ -115,11 +116,12 @@ class HttpSpecImplTest {
     ((HttpSpec) builder).request().get("https://example.com");
     ((HttpSpec) builder).response(response -> response.status(200));
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(HTTP_CLIENT_PROVIDER);
+    VerificationResult verificationResult = builder.invokeOn(HTTP_CLIENT_PROVIDER);
 
-    assertThat(assertions)
+    assertThat(verificationResult)
         .hasSize(1)
-        .satisfies(assertion -> assertThat(assertion.isSuccess()).isTrue(), Index.atIndex(0));
+        .first()
+        .satisfies(assertion -> assertThat(assertion.isSuccess()).isTrue());
   }
 
   @Test
@@ -137,9 +139,9 @@ class HttpSpecImplTest {
               response.header("x-attr", "foo");
             });
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(client);
+    VerificationResult verificationResult = builder.invokeOn(client);
 
-    assertThat(assertions).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
+    assertThat(verificationResult).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
   }
 
   @ResourceFile("json-path-reader-impl-test/read.json")
@@ -167,9 +169,9 @@ class HttpSpecImplTest {
                   });
             });
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(client);
+    VerificationResult verificationResult = builder.invokeOn(client);
 
-    assertThat(assertions).hasSize(5).allMatch(HttpResponseAssertion::isSuccess);
+    assertThat(verificationResult).hasSize(5).allMatch(HttpResponseAssertion::isSuccess);
   }
 
   @Test
@@ -192,9 +194,9 @@ class HttpSpecImplTest {
               response.header("x-attr", "foo");
             });
 
-    List<HttpResponseAssertion<?>> assertions = builder.run(client);
+    VerificationResult verificationResult = builder.invokeOn(client);
 
-    assertThat(assertions).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
+    assertThat(verificationResult).hasSize(3).allMatch(assertion -> !assertion.isSuccess());
   }
 
   @Test
@@ -220,7 +222,7 @@ class HttpSpecImplTest {
     assertThatThrownBy(
             () -> {
               @SuppressWarnings("unused")
-              List<HttpResponseAssertion<?>> assertions = builder.run(client);
+              VerificationResult verificationResult = builder.invokeOn(client);
             })
         .isInstanceOf(RuntimeException.class)
         .hasMessageContaining("interrupted");

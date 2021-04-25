@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
-import org.mikeneck.httpspec.HttpExchange;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.HttpSpecRunner;
+import org.mikeneck.httpspec.HttpSpecVerifier;
 
-public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<HttpExchange> {
+public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<HttpSpecVerifier> {
 
   private final int[] count = new int[] {0};
-  private final List<HttpExchange> exchanges = new ArrayList<>();
+  private final List<HttpSpecVerifier> httpSpecVerifiers = new ArrayList<>();
 
   @Override
   public @NotNull HttpSpecRunner build() {
@@ -27,7 +27,7 @@ public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<H
     int id = ++count[0];
     HttpSpecImpl httpSpec = new HttpSpecImpl(id);
     configuration.accept(httpSpec);
-    exchanges.add(httpSpec);
+    httpSpecVerifiers.add(httpSpec);
   }
 
   public int size() {
@@ -36,7 +36,7 @@ public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<H
 
   @NotNull
   @Override
-  public Iterator<HttpExchange> iterator() {
-    return exchanges.iterator();
+  public Iterator<HttpSpecVerifier> iterator() {
+    return httpSpecVerifiers.iterator();
   }
 }
