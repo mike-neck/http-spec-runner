@@ -1,12 +1,12 @@
 package org.mikeneck.httpspec.impl;
 
+import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
-import org.mikeneck.httpspec.ClientConfiguration;
-import org.mikeneck.httpspec.HttpClientBuilder;
+import org.mikeneck.httpspec.Client;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.HttpSpecRunner;
 import org.mikeneck.httpspec.HttpSpecVerifier;
@@ -16,22 +16,19 @@ public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<H
   private final int[] count = new int[] {0};
   private final List<HttpSpecVerifier> httpSpecVerifiers = new ArrayList<>();
 
+  @SuppressWarnings("NullableProblems")
   @Override
   public @NotNull HttpSpecRunner build() {
-    return build(config -> {});
+    return build(HttpClient::newHttpClient);
   }
 
   @Override
-  public @NotNull HttpSpecRunner build(
-      @NotNull Consumer<@NotNull ClientConfiguration> clientConfiguration) {
+  @NotNull
+  public HttpSpecRunner build(Client client) {
     if (count[0] == 0) {
       throw new IllegalArgumentException("specs is empty");
     }
-
-    HttpClientBuilder builder = new HttpClientBuilder();
-    clientConfiguration.accept(builder);
-
-    return new HttpSpecRunnerImpl(builder, httpSpecVerifiers);
+    return new HttpSpecRunnerImpl(client, httpSpecVerifiers);
   }
 
   @Override

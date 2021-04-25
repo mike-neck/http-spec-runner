@@ -22,7 +22,7 @@ public interface HttpSpecRunner {
     HttpSpecRunner build();
 
     @NotNull
-    HttpSpecRunner build(@NotNull Consumer<@NotNull ClientConfiguration> clientConfiguration);
+    HttpSpecRunner build(Client client);
 
     void addSpec(@NotNull Consumer<@NotNull ? super HttpSpec> configuration);
   }
