@@ -42,9 +42,7 @@ public class GetRequestBuilder implements HttpRequestSpec {
               "%s?%s",
               this.url,
               this.queries
-                  .mapNameAndValue(
-                      (name, value) ->
-                          name + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8))
+                  .mapNameAndValue((name, value) -> name + "=" + value)
                   .collect(Collectors.joining("&")));
       return URI.create(url);
     }
