@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mikeneck.httpspec.Client;
 import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpResponseSpec;

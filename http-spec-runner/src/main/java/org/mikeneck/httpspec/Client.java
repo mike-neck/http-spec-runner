@@ -1,10 +1,11 @@
-package org.mikeneck.httpspec.impl;
+package org.mikeneck.httpspec;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
+import org.mikeneck.httpspec.impl.GetRequestBuilder;
 
 public interface Client {
 
