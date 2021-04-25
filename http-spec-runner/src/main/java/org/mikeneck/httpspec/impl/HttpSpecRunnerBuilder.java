@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
+import org.mikeneck.httpspec.ClientConfiguration;
+import org.mikeneck.httpspec.HttpClientBuilder;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.HttpSpecRunner;
 import org.mikeneck.httpspec.HttpSpecVerifier;
@@ -16,10 +18,20 @@ public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<H
 
   @Override
   public @NotNull HttpSpecRunner build() {
+    return build(config -> {});
+  }
+
+  @Override
+  public @NotNull HttpSpecRunner build(
+      @NotNull Consumer<@NotNull ClientConfiguration> clientConfiguration) {
     if (count[0] == 0) {
       throw new IllegalArgumentException("specs is empty");
     }
-    return new HttpSpecRunnerImpl();
+
+    HttpClientBuilder builder = new HttpClientBuilder();
+    clientConfiguration.accept(builder);
+
+    return new HttpSpecRunnerImpl(builder, httpSpecVerifiers);
   }
 
   @Override

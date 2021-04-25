@@ -21,6 +21,9 @@ public interface HttpSpecRunner {
     @NotNull
     HttpSpecRunner build();
 
+    @NotNull
+    HttpSpecRunner build(@NotNull Consumer<@NotNull ClientConfiguration> clientConfiguration);
+
     void addSpec(@NotNull Consumer<@NotNull ? super HttpSpec> configuration);
   }
 }
