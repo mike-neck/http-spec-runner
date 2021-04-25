@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.Client;
+import org.mikeneck.httpspec.Extension;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.HttpSpecRunner;
 import org.mikeneck.httpspec.HttpSpecVerifier;
@@ -24,11 +25,22 @@ public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<H
 
   @Override
   @NotNull
-  public HttpSpecRunner build(Client client) {
+  public HttpSpecRunner build(@NotNull Client client) {
+    return build(client, Extension.noOp());
+  }
+
+  @SuppressWarnings("NullableProblems")
+  @Override
+  public @NotNull HttpSpecRunner build(@NotNull Extension extension) {
+    return build(HttpClient::newHttpClient, extension);
+  }
+
+  @Override
+  public @NotNull HttpSpecRunner build(@NotNull Client client, @NotNull Extension extension) {
     if (count[0] == 0) {
       throw new IllegalArgumentException("specs is empty");
     }
-    return new HttpSpecRunnerImpl(client, httpSpecVerifiers);
+    return new HttpSpecRunnerImpl(client, extension, httpSpecVerifiers);
   }
 
   @Override

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.junit.jupiter.api.Test;
 import org.mikeneck.httpspec.Client;
+import org.mikeneck.httpspec.Extension;
 import org.mikeneck.httpspec.HttpSpecVerifier;
 import org.mikeneck.httpspec.VerificationResult;
 
@@ -32,7 +33,7 @@ class HttpSpecRunnerImplTest {
               return new MockVerificationResult("test-2", HttpResponseAssertion.success(200));
             });
 
-    HttpSpecRunnerImpl httpSpecRunner = new HttpSpecRunnerImpl(client, verifiers);
+    HttpSpecRunnerImpl httpSpecRunner = new HttpSpecRunnerImpl(client, Extension.noOp(), verifiers);
 
     httpSpecRunner.run();
 

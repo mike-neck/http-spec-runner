@@ -5,6 +5,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Extension {
 
+  static Extension noOp() {
+    return builder().build();
+  }
+
   static BeforeAllSpecsRegistry builder() {
     return beforeAll ->
         beforeEach ->
