@@ -2,13 +2,19 @@ package org.mikeneck.httpspec;
 
 import java.io.File;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 public interface HttpSpecRunner {
 
   static Builder builder() {
-    throw new UnsupportedOperationException("not implemented");
+    ServiceLoader<Builder> serviceLoader = ServiceLoader.load(Builder.class);
+    return serviceLoader
+        .findFirst()
+        .orElseThrow(
+            () ->
+                new IllegalStateException("Implementation of HttpSpecRunner.Builder is not found"));
   }
 
   static HttpSpecRunner from(File yamlFile) {
