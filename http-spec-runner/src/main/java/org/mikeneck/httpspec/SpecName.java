@@ -5,5 +5,5 @@ import org.jetbrains.annotations.NotNull;
 public interface SpecName {
 
   @NotNull
-  String get();
+  String specName();
 }

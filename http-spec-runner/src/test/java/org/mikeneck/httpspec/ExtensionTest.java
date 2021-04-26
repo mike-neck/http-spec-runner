@@ -118,7 +118,7 @@ class ExtensionTest {
     List<String> specNames = new ArrayList<>();
 
     Extension.BeforeEachSpecsRegistry registry = Extension.builder();
-    Consumer<SpecName> beforeEach = specName -> specNames.add(specName.get());
+    Consumer<SpecName> beforeEach = specName -> specNames.add(specName.specName());
     Extension.Builder builder = registry.onCallBeforeEachSpecs(beforeEach);
 
     Extension extension = builder.build();

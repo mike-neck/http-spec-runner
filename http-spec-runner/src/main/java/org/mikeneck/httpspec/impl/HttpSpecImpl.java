@@ -10,10 +10,9 @@ import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpResponseSpec;
 import org.mikeneck.httpspec.HttpSpec;
-import org.mikeneck.httpspec.HttpSpecVerifier;
 import org.mikeneck.httpspec.VerificationResult;
 
-public class HttpSpecImpl implements HttpSpec, HttpSpecVerifier {
+public class HttpSpecImpl implements HttpSpec, NamedHttpSpecVerifier {
 
   private final int id;
   private @NotNull final Specs specs;
@@ -61,11 +60,16 @@ public class HttpSpecImpl implements HttpSpec, HttpSpecVerifier {
   @Override
   public @NotNull VerificationResult invokeOn(@NotNull Client client) {
     if (requestSpecConfigured() && specs.isConfigured()) {
-      @NotNull String specName = this.specName == null ? defaultName() : this.specName;
+      String specName = specName();
       List<HttpResponseAssertion<?>> assertions = specs.httpExchange(request, client);
       return new VerificationResultImpl(specName, assertions);
     }
     throw unconfigured();
+  }
+
+  @Override
+  public @NotNull String specName() {
+    return this.specName == null ? defaultName() : this.specName;
   }
 
   private @NotNull String defaultName() {

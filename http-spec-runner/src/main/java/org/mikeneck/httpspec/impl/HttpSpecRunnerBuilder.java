@@ -15,7 +15,7 @@ import org.mikeneck.httpspec.HttpSpecVerifier;
 public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<HttpSpecVerifier> {
 
   private final int[] count = new int[] {0};
-  private final List<HttpSpecVerifier> httpSpecVerifiers = new ArrayList<>();
+  private final List<NamedHttpSpecVerifier> httpSpecVerifiers = new ArrayList<>();
 
   @SuppressWarnings("NullableProblems")
   @Override
@@ -58,6 +58,17 @@ public class HttpSpecRunnerBuilder implements HttpSpecRunner.Builder, Iterable<H
   @NotNull
   @Override
   public Iterator<HttpSpecVerifier> iterator() {
-    return httpSpecVerifiers.iterator();
+    Iterator<NamedHttpSpecVerifier> iterator = httpSpecVerifiers.iterator();
+    return new Iterator<>() {
+      @Override
+      public boolean hasNext() {
+        return iterator.hasNext();
+      }
+
+      @Override
+      public HttpSpecVerifier next() {
+        return iterator.next();
+      }
+    };
   }
 }

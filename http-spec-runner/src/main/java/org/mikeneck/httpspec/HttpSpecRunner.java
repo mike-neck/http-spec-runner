@@ -1,6 +1,7 @@
 package org.mikeneck.httpspec;
 
 import java.io.File;
+import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +14,9 @@ public interface HttpSpecRunner {
   static HttpSpecRunner from(File yamlFile) {
     throw new UnsupportedOperationException("not implemented");
   }
+
+  @NotNull
+  List<@NotNull VerificationResult> runForResult();
 
   void run();
 
