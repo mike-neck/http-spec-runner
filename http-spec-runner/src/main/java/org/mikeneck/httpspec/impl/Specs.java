@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.mikeneck.httpspec.Client;
@@ -57,5 +58,17 @@ public class Specs {
     for (HttpElementSpec spec : specs) {
       responseSpecs.add(spec);
     }
+  }
+
+  @NotNull
+  String unconfiguredMessage() {
+    StringBuilder sub = new StringBuilder();
+    if (!responseSpecs.isEmpty()) {
+      sub.append(' ');
+      String expecting =
+          responseSpecs.stream().map(HttpElementSpec::description).collect(Collectors.joining("/"));
+      sub.append(expecting);
+    }
+    return sub.toString();
   }
 }

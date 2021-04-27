@@ -2,7 +2,6 @@ package org.mikeneck.httpspec.impl;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mikeneck.httpspec.Client;
@@ -12,14 +11,14 @@ import org.mikeneck.httpspec.HttpResponseSpec;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.VerificationResult;
 
-public class HttpSpecImpl implements HttpSpec, NamedHttpSpecVerifier {
+class HttpSpecImpl implements HttpSpec, NamedHttpSpecVerifier {
 
   private final int id;
   private @NotNull final Specs specs;
   private @Nullable String specName = null;
   private @Nullable GetRequestBuilder request = null;
 
-  public HttpSpecImpl(int id) {
+  HttpSpecImpl(int id) {
     this(id, new Specs());
   }
 
@@ -84,14 +83,7 @@ public class HttpSpecImpl implements HttpSpec, NamedHttpSpecVerifier {
     if (request != null) {
       sb.append('(').append(request).append(')');
     }
-    if (!specs.responseSpecs.isEmpty()) {
-      sb.append(' ');
-      String expecting =
-          specs.responseSpecs.stream()
-              .map(HttpElementSpec::description)
-              .collect(Collectors.joining("/"));
-      sb.append(expecting);
-    }
+    sb.append(specs.unconfiguredMessage());
     return new IllegalStateException(sb.toString());
   }
 }
