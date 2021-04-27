@@ -46,8 +46,25 @@ public class Get implements Request {
 
   @Override
   public void accept(HttpSpec http) {
+    ObjectNodeOperator queriesOperator = new ObjectNodeOperator(queries);
+    ObjectNodeOperator headerOperator = new ObjectNodeOperator(headers);
     HttpRequestMethodSpec request = http.request();
     request.get(get);
-    request.get(get, httpRequestSpec -> {});
+    request.get(
+        get,
+        httpRequestSpec -> {
+          queriesOperator
+              .doOnString(httpRequestSpec::query)
+              .doOnInt(httpRequestSpec::query)
+              .doOnDouble((name, value) -> httpRequestSpec.query(name, Double.toString(value)))
+              .doOnBoolean((name, value) -> httpRequestSpec.query(name, Boolean.toString(value)))
+              .execute();
+          headerOperator
+              .doOnString(httpRequestSpec::header)
+              .doOnInt((name, value) -> httpRequestSpec.header(name, Long.toString(value)))
+              .doOnDouble((name, value) -> httpRequestSpec.header(name, Double.toString(value)))
+              .doOnBoolean((name, value) -> httpRequestSpec.header(name, Boolean.toString(value)))
+              .execute();
+        });
   }
 }
