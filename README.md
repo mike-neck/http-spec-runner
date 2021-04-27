@@ -30,8 +30,8 @@ spec:
       body:
         - path: $.firstName
           expect:
-            - type: string
-              value: John
+            type: string
+            value: John
 ```
 
 ```java
