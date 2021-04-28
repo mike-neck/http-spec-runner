@@ -21,14 +21,14 @@ public class YamlFileLoader implements FileLoader {
     return null;
   }
 
-  public @NotNull Specs load(@NotNull Reader reader) {
+  public @NotNull Specs loadSpec(@NotNull Reader reader) {
     try (Stream<String> lines = new BufferedReader(reader).lines()) {
       String yaml = lines.collect(Collectors.joining("\n"));
-      return load(yaml);
+      return loadSpec(yaml);
     }
   }
 
-  public @NotNull Specs load(@NotNull String yaml) {
+  public @NotNull Specs loadSpec(@NotNull String yaml) {
     ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
     try {
       return objectMapper.readValue(yaml, Specs.class);

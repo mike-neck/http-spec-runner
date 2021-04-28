@@ -17,7 +17,7 @@ class YamlFileLoaderTest {
   @ResourceFile("yaml-file/get-spec.yml")
   void loadGetSpec(@NotNull String yaml) {
     YamlFileLoader yamlFileLoader = new YamlFileLoader();
-    Specs specs = yamlFileLoader.load(yaml);
+    Specs specs = yamlFileLoader.loadSpec(yaml);
 
     assertThat(specs).hasSize(1);
   }
@@ -26,7 +26,7 @@ class YamlFileLoaderTest {
   @ResourceFile("yaml-file/get-spec.yml")
   void loadGetSpec(@NotNull Reader reader) {
     YamlFileLoader yamlFileLoader = new YamlFileLoader();
-    Specs specs = yamlFileLoader.load(reader);
+    Specs specs = yamlFileLoader.loadSpec(reader);
 
     assertThat(specs).hasSize(1);
   }
