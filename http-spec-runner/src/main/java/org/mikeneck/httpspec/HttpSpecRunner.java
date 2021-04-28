@@ -26,7 +26,7 @@ public interface HttpSpecRunner {
 
   void run();
 
-  interface Builder {
+  interface BaseBuilder {
 
     @NotNull
     HttpSpecRunner build();
@@ -39,6 +39,9 @@ public interface HttpSpecRunner {
 
     @NotNull
     HttpSpecRunner build(@NotNull Client client, @NotNull Extension extension);
+  }
+
+  interface Builder extends BaseBuilder {
 
     void addSpec(@NotNull Consumer<@NotNull ? super HttpSpec> configuration);
   }
