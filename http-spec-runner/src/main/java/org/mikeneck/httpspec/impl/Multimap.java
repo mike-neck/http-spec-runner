@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,19 @@ public class Multimap {
   @Override
   public String toString() {
     return map.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Multimap)) return false;
+    Multimap multimap = (Multimap) o;
+    return map.equals(multimap.map);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(map);
   }
 
   static class NameAndValue {
