@@ -10,6 +10,7 @@ import org.mikeneck.httpspec.Client;
 import org.mikeneck.httpspec.Extension;
 import org.mikeneck.httpspec.HttpSpecRunner;
 import org.mikeneck.httpspec.SpecName;
+import org.mikeneck.httpspec.UnexpectedResponseException;
 import org.mikeneck.httpspec.VerificationResult;
 
 class HttpSpecRunnerImpl implements HttpSpecRunner, Extension {
@@ -44,8 +45,23 @@ class HttpSpecRunnerImpl implements HttpSpecRunner, Extension {
   }
 
   @Override
-  public void run() {
-    runForResult();
+  public void run() throws UnexpectedResponseException, IllegalStateException {
+    List<@NotNull VerificationResult> results = runForResult();
+    List<@NotNull VerificationResult> failures =
+        results.stream()
+            .filter(
+                result ->
+                    result.allAssertions().stream().anyMatch(assertion -> !assertion.isSuccess()))
+            .collect(Collectors.toUnmodifiableList());
+    if (!failures.isEmpty()) {
+      StringBuilder sb = new StringBuilder("There are failed tests in ");
+      String specNames =
+          failures.stream()
+              .map(VerificationResult::specName)
+              .collect(Collectors.joining(",", "[", "]"));
+      sb.append(specNames);
+      throw new UnexpectedResponseException(sb.toString(), failures);
+    }
   }
 
   @Override
