@@ -35,16 +35,17 @@ public interface HttpSpecRunner {
   interface BaseBuilder {
 
     @NotNull
-    HttpSpecRunner build();
+    HttpSpecRunner build() throws IllegalArgumentException;
 
     @NotNull
-    HttpSpecRunner build(@NotNull Client client);
+    HttpSpecRunner build(@NotNull Client client) throws IllegalArgumentException;
 
     @NotNull
-    HttpSpecRunner build(@NotNull Extension extension);
+    HttpSpecRunner build(@NotNull Extension extension) throws IllegalArgumentException;
 
     @NotNull
-    HttpSpecRunner build(@NotNull Client client, @NotNull Extension extension);
+    HttpSpecRunner build(@NotNull Client client, @NotNull Extension extension)
+        throws IllegalArgumentException;
   }
 
   interface Builder extends BaseBuilder {

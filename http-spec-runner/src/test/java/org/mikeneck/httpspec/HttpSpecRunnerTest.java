@@ -7,6 +7,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -121,5 +122,43 @@ class HttpSpecRunnerTest {
         () ->
             assertThat(results.stream().flatMap(result -> result.allAssertions().stream()))
                 .allMatch(HttpResponseAssertion::isSuccess));
+  }
+
+  @ResourceFile("json-path-reader-impl-test/read.json")
+  @Test
+  void runMethodThrowsExceptionWhenThereAreTestFailures(String responseJson) {
+    stubFor(
+        get(urlPathEqualTo("/path"))
+            .withQueryParams(Map.of("q", equalTo("test")))
+            .willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withBody(responseJson)));
+
+    HttpSpecRunner.Builder builder = HttpSpecRunner.builder();
+    builder.addSpec(
+        spec -> {
+          spec.name("getting path resource with paging parameters");
+          spec.request()
+              .get(
+                  "http://localhost:8080/path",
+                  request -> {
+                    request.query("q", "test");
+                    request.query("page", 4);
+                    request.query("limit", 10);
+                    request.header("accept", "application/json");
+                    request.header("authorization", "bearer 11aa22bb33cc");
+                  });
+          spec.response(
+              response -> {
+                response.status(200);
+                response.header("content-type", "application/json");
+                response.jsonBody(jsonBody -> jsonBody.path("$.firstName").toBe("Anthony"));
+                response.jsonBody(jsonBody -> jsonBody.path("$.lastName").toBe("Davis"));
+              });
+        });
+    HttpSpecRunner httpSpecRunner = builder.build();
+
+    assertThatThrownBy(httpSpecRunner::run)
+        .isInstanceOf(UnexpectedResponseException.class)
+        .hasMessageContaining("getting path resource with paging parameters");
   }
 }
