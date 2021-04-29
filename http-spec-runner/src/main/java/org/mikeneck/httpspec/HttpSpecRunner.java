@@ -18,7 +18,13 @@ public interface HttpSpecRunner {
   }
 
   static HttpSpecRunner from(File yamlFile) {
-    throw new UnsupportedOperationException("not implemented");
+    ServiceLoader<FileLoader> serviceLoader = ServiceLoader.load(FileLoader.class);
+    FileLoader fileLoader =
+        serviceLoader
+            .findFirst()
+            .orElseThrow(
+                () -> new IllegalStateException("implementation of FileLoader is not found"));
+    return fileLoader.load(yamlFile);
   }
 
   @NotNull

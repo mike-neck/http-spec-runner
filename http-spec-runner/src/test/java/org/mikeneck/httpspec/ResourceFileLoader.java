@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.net.URL;
@@ -110,7 +111,12 @@ public class ResourceFileLoader implements ParameterResolver, AfterEachCallback 
     if (resource == null) {
       return false;
     }
-    Class<?> parameterType = parameterContext.getParameter().getType();
+    Parameter parameter = parameterContext.getParameter();
+    Annotation[] annotations = parameter.getAnnotations();
+    if (annotations.length != 0) {
+      return false;
+    }
+    Class<?> parameterType = parameter.getType();
     return SupportedTypes.supporting(parameterType);
   }
 

@@ -43,6 +43,8 @@ public class JsonPathReaderImpl implements JsonPathReader {
           JsonItem item = JsonItemFactory.fromNode(node);
           return Optional.of(item);
         } catch (PathNotFoundException | UnsupportedOperationException ignored) {
+          System.out.println("JsonPathReaderImpl$JsonPathProduct:");
+          System.out.println(json);
           return Optional.empty();
         }
       }
