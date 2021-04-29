@@ -17,7 +17,7 @@ import org.mikeneck.httpspec.impl.specs.JsonItem;
 public interface JsonItemFactory {
 
   @NotNull
-  static JsonItem fromNode(@NotNull JsonNode node) {
+  static JsonItem fromNode(@NotNull JsonNode node) throws IllegalArgumentException {
     if (node.isTextual()) {
       String value = node.asText();
       return stringItem(value);
@@ -101,7 +101,7 @@ public interface JsonItemFactory {
   }
 
   @NotNull
-  static JsonItem fromObject(@NotNull Object object) {
+  static JsonItem fromObject(@NotNull Object object) throws IllegalArgumentException {
     if (object instanceof String) {
       return stringItem(((String) object));
     } else if (object instanceof Long || object instanceof Integer) {
