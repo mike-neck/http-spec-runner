@@ -4,6 +4,7 @@ import java.net.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
 import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.impl.HttpResponseAssertionFactory;
 
 public class HttpStatusSpec implements HttpElementSpec {
 
@@ -18,9 +19,9 @@ public class HttpStatusSpec implements HttpElementSpec {
   public HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse) {
     int actualStatusCode = httpResponse.statusCode();
     if (actualStatusCode == expectedStatusCode) {
-      return HttpResponseAssertion.success(expectedStatusCode);
+      return HttpResponseAssertionFactory.success(expectedStatusCode);
     } else {
-      return HttpResponseAssertion.failure(expectedStatusCode, actualStatusCode);
+      return HttpResponseAssertionFactory.failure(expectedStatusCode, actualStatusCode);
     }
   }
 

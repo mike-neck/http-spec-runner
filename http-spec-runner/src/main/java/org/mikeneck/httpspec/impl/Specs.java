@@ -31,7 +31,7 @@ public class Specs {
       HttpResponse<byte[]> httpResponse = provider.exchange(request);
       return composeResults(spec -> spec.apply(httpResponse));
     } catch (IOException e) {
-      return composeResults(spec -> HttpResponseAssertion.exception(spec.description(), e));
+      return composeResults(spec -> HttpResponseAssertionFactory.exception(spec.description(), e));
     }
   }
 

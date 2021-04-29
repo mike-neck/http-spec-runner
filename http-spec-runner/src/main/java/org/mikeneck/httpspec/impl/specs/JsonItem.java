@@ -3,6 +3,7 @@ package org.mikeneck.httpspec.impl.specs;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.impl.HttpResponseAssertionFactory;
 
 public interface JsonItem {
 
@@ -12,13 +13,13 @@ public interface JsonItem {
   default HttpResponseAssertion<?> testJson(@NotNull JsonPathProduct jsonPathProduct) {
     Optional<JsonItem> optional = jsonPathProduct.get();
     if (optional.isEmpty()) {
-      return HttpResponseAssertion.failure(this, null);
+      return HttpResponseAssertionFactory.failure(this, null);
     }
     JsonItem item = optional.get();
     if (equals(item)) {
-      return HttpResponseAssertion.success(this);
+      return HttpResponseAssertionFactory.success(this);
     } else {
-      return HttpResponseAssertion.failure(this, item);
+      return HttpResponseAssertionFactory.failure(this, item);
     }
   }
 }

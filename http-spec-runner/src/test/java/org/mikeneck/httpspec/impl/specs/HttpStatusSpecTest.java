@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
 import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.impl.HttpResponseAssertionFactory;
 import org.mikeneck.httpspec.impl.MockHttpResponse;
 
 class HttpStatusSpecTest {
@@ -16,7 +17,7 @@ class HttpStatusSpecTest {
 
     HttpResponseAssertion<?> result = spec.apply(response);
 
-    assertThat(result).isEqualTo(HttpResponseAssertion.success(200));
+    assertThat(result).isEqualTo(HttpResponseAssertionFactory.success(200));
   }
 
   @Test
@@ -26,7 +27,7 @@ class HttpStatusSpecTest {
 
     HttpResponseAssertion<?> result = spec.apply(response);
 
-    assertThat(result).isEqualTo(HttpResponseAssertion.success(404));
+    assertThat(result).isEqualTo(HttpResponseAssertionFactory.success(404));
   }
 
   @Test
@@ -36,7 +37,7 @@ class HttpStatusSpecTest {
 
     HttpResponseAssertion<?> result = spec.apply(response);
 
-    assertThat(result).isEqualTo(HttpResponseAssertion.failure(200, 404));
+    assertThat(result).isEqualTo(HttpResponseAssertionFactory.failure(200, 404));
   }
 
   @Test

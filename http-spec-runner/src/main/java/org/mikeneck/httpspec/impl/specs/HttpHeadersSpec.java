@@ -7,6 +7,7 @@ import org.mikeneck.httpspec.HttpHeaderItem;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
 import org.mikeneck.httpspec.impl.HttpHeaderItemImpl;
 import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.impl.HttpResponseAssertionFactory;
 
 public class HttpHeadersSpec implements HttpElementSpec {
 
@@ -20,9 +21,9 @@ public class HttpHeadersSpec implements HttpElementSpec {
   public @NotNull HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse) {
     if (httpHeaderItem.canBeFoundIn(httpResponse)) {
       List<HttpHeaderItem> actualHeaders = httpHeaderItem.extractSameNameHeaders(httpResponse);
-      return HttpResponseAssertion.itemFoundInCollection(httpHeaderItem, actualHeaders);
+      return HttpResponseAssertionFactory.itemFoundInCollection(httpHeaderItem, actualHeaders);
     } else {
-      return HttpResponseAssertion.failure(httpHeaderItem, null);
+      return HttpResponseAssertionFactory.failure(httpHeaderItem, null);
     }
   }
 

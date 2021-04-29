@@ -22,7 +22,7 @@ class HttpSpecRunnerImplTest {
       @Override
       public @NotNull VerificationResult invokeOn(@NotNull Client client) {
         operation.accept(client);
-        return new MockVerificationResult(name, HttpResponseAssertion.success(200));
+        return new MockVerificationResult(name, HttpResponseAssertionFactory.success(200));
       }
 
       @Override
