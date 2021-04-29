@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mikeneck.httpspec.Client;
 import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.HttpResponseSpec;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.VerificationResult;

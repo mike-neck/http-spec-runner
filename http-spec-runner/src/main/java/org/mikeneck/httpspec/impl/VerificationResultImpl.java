@@ -3,6 +3,7 @@ package org.mikeneck.httpspec.impl;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.VerificationResult;
 
 public class VerificationResultImpl implements VerificationResult {

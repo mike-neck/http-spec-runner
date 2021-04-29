@@ -12,6 +12,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import org.junit.jupiter.api.Test;
 import org.mikeneck.httpspec.Client;
 import org.mikeneck.httpspec.Extension;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.VerificationResult;
 
 class HttpSpecRunnerImplTest {

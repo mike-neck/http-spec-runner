@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.net.http.HttpResponse;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
 import org.mikeneck.httpspec.impl.HttpHeaderItemImpl;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.MockHttpResponse;
 import org.mikeneck.httpspec.impl.Multimap;
 

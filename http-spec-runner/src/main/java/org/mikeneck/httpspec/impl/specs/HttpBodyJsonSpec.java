@@ -3,8 +3,8 @@ package org.mikeneck.httpspec.impl.specs;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import org.jetbrains.annotations.NotNull;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.specs.json.JsonPathReaderImpl;
 
 public class HttpBodyJsonSpec implements HttpElementSpec {

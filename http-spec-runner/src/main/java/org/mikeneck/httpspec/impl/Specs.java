@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.mikeneck.httpspec.Client;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 
 public class Specs {
 

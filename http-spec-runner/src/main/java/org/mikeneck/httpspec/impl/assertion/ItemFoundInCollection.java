@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 
 public class ItemFoundInCollection<@NotNull T> implements HttpResponseAssertion<Collection<T>> {
 

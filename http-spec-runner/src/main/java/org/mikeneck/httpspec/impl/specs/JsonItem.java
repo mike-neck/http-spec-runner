@@ -2,7 +2,7 @@ package org.mikeneck.httpspec.impl.specs;
 
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.HttpResponseAssertionFactory;
 
 public interface JsonItem {

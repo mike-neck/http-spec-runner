@@ -3,8 +3,8 @@ package org.mikeneck.httpspec.impl.specs;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.HttpResponseAssertionFactory;
 import org.mikeneck.httpspec.impl.MockHttpResponse;
 

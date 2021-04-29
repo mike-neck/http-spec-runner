@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 
 public class HttpResponseAssertionTest {
 

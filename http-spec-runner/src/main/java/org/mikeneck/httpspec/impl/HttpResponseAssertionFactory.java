@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.assertion.ExceptionOccurred;
 import org.mikeneck.httpspec.impl.assertion.Failure;
 import org.mikeneck.httpspec.impl.assertion.ItemFoundInCollection;

@@ -1,4 +1,4 @@
-package org.mikeneck.httpspec.impl;
+package org.mikeneck.httpspec;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

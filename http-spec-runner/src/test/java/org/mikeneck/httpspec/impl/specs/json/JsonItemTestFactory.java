@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DynamicTest;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 import org.mikeneck.httpspec.impl.specs.JsonPathProduct;
 

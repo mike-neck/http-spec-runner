@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 
 public interface VerificationResult extends Iterable<HttpResponseAssertion<?>> {
 

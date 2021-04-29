@@ -7,10 +7,10 @@ import java.net.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.ResourceFile;
 import org.mikeneck.httpspec.ResourceFileLoader;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
 import org.mikeneck.httpspec.impl.MockHttpResponse;
 import org.mikeneck.httpspec.impl.specs.json.JsonItemFactory;
 

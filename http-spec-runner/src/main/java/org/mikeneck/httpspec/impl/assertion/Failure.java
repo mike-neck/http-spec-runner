@@ -3,7 +3,7 @@ package org.mikeneck.httpspec.impl.assertion;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 
 public class Failure<@NotNull T> implements HttpResponseAssertion<T> {
 

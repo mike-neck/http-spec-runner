@@ -2,7 +2,7 @@ package org.mikeneck.httpspec.impl.assertion;
 
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.mikeneck.httpspec.impl.HttpResponseAssertion;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 
 public class Success<@NotNull T> implements HttpResponseAssertion<T> {
 

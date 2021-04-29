@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.Client;
 import org.mikeneck.httpspec.HttpRequestMethodSpec;
 import org.mikeneck.httpspec.HttpRequestSpec;
+import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.ResourceFile;
 import org.mikeneck.httpspec.ResourceFileLoader;
