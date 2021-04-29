@@ -5,5 +5,5 @@ import org.jetbrains.annotations.NotNull;
 public interface JsonPathOperator {
 
   @NotNull
-  JsonPathProduct read(@NotNull String json);
+  JsonPathProduct apply(@NotNull String json);
 }

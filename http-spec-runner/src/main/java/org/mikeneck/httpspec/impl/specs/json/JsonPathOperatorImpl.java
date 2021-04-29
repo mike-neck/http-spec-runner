@@ -29,7 +29,7 @@ public class JsonPathOperatorImpl implements JsonPathOperator {
   }
 
   @Override
-  public @NotNull JsonPathProduct read(@NotNull String json) {
+  public @NotNull JsonPathProduct apply(@NotNull String json) {
     return new JsonPathProduct() {
       @Override
       public @NotNull String path() {

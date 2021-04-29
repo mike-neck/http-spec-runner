@@ -20,7 +20,7 @@ class JsonPathOperatorImplTest {
   @Test
   void unknownPath(@NotNull String json) {
     JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.unknown");
-    JsonPathProduct product = jsonPathOperator.read(json);
+    JsonPathProduct product = jsonPathOperator.apply(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.unknown"),
@@ -31,7 +31,7 @@ class JsonPathOperatorImplTest {
   @Test
   void expectedSingleValue(@NotNull String json) {
     JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.firstName");
-    JsonPathProduct product = jsonPathOperator.read(json);
+    JsonPathProduct product = jsonPathOperator.apply(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.firstName"),
@@ -42,7 +42,7 @@ class JsonPathOperatorImplTest {
   @Test
   void expectSingleIntValue(@NotNull String json) {
     JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.age");
-    JsonPathProduct product = jsonPathOperator.read(json);
+    JsonPathProduct product = jsonPathOperator.apply(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.age"),
@@ -53,7 +53,7 @@ class JsonPathOperatorImplTest {
   @Test
   void expectSingleDoubleValue(@NotNull String json) {
     JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.rate");
-    JsonPathProduct product = jsonPathOperator.read(json);
+    JsonPathProduct product = jsonPathOperator.apply(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.rate"),
@@ -64,7 +64,7 @@ class JsonPathOperatorImplTest {
   @Test
   void expectArrayValue(@NotNull String json) {
     JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.phoneNumbers[*].type");
-    JsonPathProduct product = jsonPathOperator.read(json);
+    JsonPathProduct product = jsonPathOperator.apply(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.phoneNumbers[*].type"),
@@ -83,7 +83,7 @@ class JsonPathOperatorImplTest {
   @Test
   void expectObjectValue(@NotNull String json) {
     JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.address");
-    JsonPathProduct product = jsonPathOperator.read(json);
+    JsonPathProduct product = jsonPathOperator.apply(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.address"),

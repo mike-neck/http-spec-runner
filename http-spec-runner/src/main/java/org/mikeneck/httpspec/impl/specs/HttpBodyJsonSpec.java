@@ -23,7 +23,7 @@ public class HttpBodyJsonSpec implements HttpElementSpec {
   public @NotNull HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse) {
     byte[] bytes = httpResponse.body();
     String body = new String(bytes, StandardCharsets.UTF_8);
-    JsonPathProduct jsonPathProduct = jsonPathOperator.read(body);
+    JsonPathProduct jsonPathProduct = jsonPathOperator.apply(body);
     return expectedValue.testJson(jsonPathProduct);
   }
 
