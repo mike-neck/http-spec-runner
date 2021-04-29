@@ -9,10 +9,10 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
+import org.mikeneck.httpspec.impl.specs.JsonPathOperator;
 import org.mikeneck.httpspec.impl.specs.JsonPathProduct;
-import org.mikeneck.httpspec.impl.specs.JsonPathReader;
 
-public class JsonPathReaderImpl implements JsonPathReader {
+public class JsonPathOperatorImpl implements JsonPathOperator {
 
   static final Configuration CONFIGURATION =
       new Configuration.ConfigurationBuilder()
@@ -23,7 +23,7 @@ public class JsonPathReaderImpl implements JsonPathReader {
   @NotNull private final JsonPath jsonPath;
   @NotNull private final String path;
 
-  public JsonPathReaderImpl(@NotNull String path) {
+  public JsonPathOperatorImpl(@NotNull String path) {
     this.jsonPath = JsonPath.compile(path);
     this.path = path;
   }

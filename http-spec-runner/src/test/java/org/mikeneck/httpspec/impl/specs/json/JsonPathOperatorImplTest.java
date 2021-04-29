@@ -10,17 +10,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.ResourceFile;
 import org.mikeneck.httpspec.ResourceFileLoader;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
+import org.mikeneck.httpspec.impl.specs.JsonPathOperator;
 import org.mikeneck.httpspec.impl.specs.JsonPathProduct;
-import org.mikeneck.httpspec.impl.specs.JsonPathReader;
 
 @ExtendWith(ResourceFileLoader.class)
-class JsonPathReaderImplTest {
+class JsonPathOperatorImplTest {
 
   @ResourceFile("json-path-reader-impl-test/read.json")
   @Test
   void unknownPath(@NotNull String json) {
-    JsonPathReader jsonPathReader = new JsonPathReaderImpl("$.unknown");
-    JsonPathProduct product = jsonPathReader.read(json);
+    JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.unknown");
+    JsonPathProduct product = jsonPathOperator.read(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.unknown"),
@@ -30,8 +30,8 @@ class JsonPathReaderImplTest {
   @ResourceFile("json-path-reader-impl-test/read.json")
   @Test
   void expectedSingleValue(@NotNull String json) {
-    JsonPathReader jsonPathReader = new JsonPathReaderImpl("$.firstName");
-    JsonPathProduct product = jsonPathReader.read(json);
+    JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.firstName");
+    JsonPathProduct product = jsonPathOperator.read(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.firstName"),
@@ -41,8 +41,8 @@ class JsonPathReaderImplTest {
   @ResourceFile("json-path-reader-impl-test/read.json")
   @Test
   void expectSingleIntValue(@NotNull String json) {
-    JsonPathReader jsonPathReader = new JsonPathReaderImpl("$.age");
-    JsonPathProduct product = jsonPathReader.read(json);
+    JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.age");
+    JsonPathProduct product = jsonPathOperator.read(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.age"),
@@ -52,8 +52,8 @@ class JsonPathReaderImplTest {
   @ResourceFile("json-path-reader-impl-test/read.json")
   @Test
   void expectSingleDoubleValue(@NotNull String json) {
-    JsonPathReader jsonPathReader = new JsonPathReaderImpl("$.rate");
-    JsonPathProduct product = jsonPathReader.read(json);
+    JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.rate");
+    JsonPathProduct product = jsonPathOperator.read(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.rate"),
@@ -63,8 +63,8 @@ class JsonPathReaderImplTest {
   @ResourceFile("json-path-reader-impl-test/read.json")
   @Test
   void expectArrayValue(@NotNull String json) {
-    JsonPathReader jsonPathReader = new JsonPathReaderImpl("$.phoneNumbers[*].type");
-    JsonPathProduct product = jsonPathReader.read(json);
+    JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.phoneNumbers[*].type");
+    JsonPathProduct product = jsonPathOperator.read(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.phoneNumbers[*].type"),
@@ -82,8 +82,8 @@ class JsonPathReaderImplTest {
   @ResourceFile("json-path-reader-impl-test/read.json")
   @Test
   void expectObjectValue(@NotNull String json) {
-    JsonPathReader jsonPathReader = new JsonPathReaderImpl("$.address");
-    JsonPathProduct product = jsonPathReader.read(json);
+    JsonPathOperator jsonPathOperator = new JsonPathOperatorImpl("$.address");
+    JsonPathProduct product = jsonPathOperator.read(json);
 
     assertAll(
         () -> assertThat(product.path()).isEqualTo("$.address"),
