@@ -10,6 +10,14 @@ public class Spec implements Consumer<@NotNull HttpSpec> {
   public Request request;
   public Response response;
 
+  public Spec() {}
+
+  public Spec(String name, Request request, Response response) {
+    this.name = name;
+    this.request = request;
+    this.response = response;
+  }
+
   @Override
   public void accept(@NotNull HttpSpec httpSpec) {}
 

@@ -34,7 +34,7 @@ class ResponseTest {
     return IntStream.of(200, 201, 400, 401, 402, 404, 500)
         .mapToObj(
             status -> {
-              Response response = new Response();
+              ResponseImpl response = new ResponseImpl();
               response.status = status;
 
               MockHttpResponseSpec httpResponseSpec = new MockHttpResponseSpec();
@@ -49,7 +49,7 @@ class ResponseTest {
 
   @Test
   void defaultStatus() {
-    Response response = new Response();
+    Response response = new ResponseImpl();
 
     MockHttpResponseSpec httpResponseSpec = new MockHttpResponseSpec();
 
@@ -60,7 +60,7 @@ class ResponseTest {
 
   @Test
   void headers() {
-    Response response = new Response();
+    ResponseImpl response = new ResponseImpl();
     response.headers =
         new ObjectNode(
             objectMapper.getNodeFactory(),
@@ -80,7 +80,7 @@ class ResponseTest {
 
   @Test
   void jsonBody() {
-    Response response = new Response();
+    ResponseImpl response = new ResponseImpl();
     response.body =
         jsonBodies(
             bodies -> {
@@ -102,7 +102,7 @@ class ResponseTest {
 
   @TestFactory
   Iterable<DynamicTest> all() {
-    Response response = new Response();
+    ResponseImpl response = new ResponseImpl();
     response.status = 200;
     response.headers =
         new ObjectNode(
@@ -136,7 +136,7 @@ class ResponseTest {
                 assertThat(httpResponseSpec.jsonBodies).allMatch(jsonTest -> jsonTest.test(json))));
   }
 
-  private static List<JsonBody> jsonBodies(Consumer<? super JsonBodies> config) {
+  static List<JsonBody> jsonBodies(Consumer<? super JsonBodies> config) {
     JsonBodies jsonBodies = new JsonBodies();
     config.accept(jsonBodies);
     return Collections.unmodifiableList(jsonBodies);
