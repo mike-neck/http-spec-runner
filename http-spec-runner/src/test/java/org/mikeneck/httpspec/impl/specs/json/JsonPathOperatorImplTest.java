@@ -9,13 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.ResourceFile;
-import org.mikeneck.httpspec.ResourceFileLoader;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
 import org.mikeneck.httpspec.impl.specs.JsonItemResponseAssertionError;
 import org.mikeneck.httpspec.impl.specs.JsonPathOperator;
 import org.mikeneck.httpspec.impl.specs.JsonPathProduct;
 
-@ExtendWith(ResourceFileLoader.class)
+@ExtendWith(ResourceFile.Loader.class)
 class JsonPathOperatorImplTest {
 
   @ResourceFile("json-path-reader-impl-test/read.json")

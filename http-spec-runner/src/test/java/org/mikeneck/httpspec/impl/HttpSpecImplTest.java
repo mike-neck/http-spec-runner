@@ -14,10 +14,9 @@ import org.mikeneck.httpspec.HttpRequestSpec;
 import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.HttpSpec;
 import org.mikeneck.httpspec.ResourceFile;
-import org.mikeneck.httpspec.ResourceFileLoader;
 import org.mikeneck.httpspec.VerificationResult;
 
-@ExtendWith(ResourceFileLoader.class)
+@ExtendWith(ResourceFile.Loader.class)
 class HttpSpecImplTest {
 
   private static final Client HTTP_CLIENT_PROVIDER =

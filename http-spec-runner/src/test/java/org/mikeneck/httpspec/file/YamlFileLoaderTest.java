@@ -7,10 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.ResourceFile;
-import org.mikeneck.httpspec.ResourceFileLoader;
 import org.mikeneck.httpspec.file.data.Specs;
 
-@ExtendWith(ResourceFileLoader.class)
+@ExtendWith(ResourceFile.Loader.class)
 class YamlFileLoaderTest {
 
   @Test

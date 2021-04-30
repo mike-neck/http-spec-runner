@@ -9,12 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.HttpResponseAssertion;
 import org.mikeneck.httpspec.ResourceFile;
-import org.mikeneck.httpspec.ResourceFileLoader;
 import org.mikeneck.httpspec.impl.HttpElementSpec;
 import org.mikeneck.httpspec.impl.MockHttpResponse;
 import org.mikeneck.httpspec.impl.specs.json.JsonItemFactory;
 
-@ExtendWith(ResourceFileLoader.class)
+@ExtendWith(ResourceFile.Loader.class)
 class HttpBodyJsonSpecTest {
 
   @ResourceFile("http-body-json-spec-test/single-entry-json.json")

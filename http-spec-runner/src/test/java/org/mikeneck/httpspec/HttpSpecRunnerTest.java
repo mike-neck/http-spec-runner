@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith({ResourceFileLoader.class, Env.Resolver.class})
+@ExtendWith({ResourceFile.Loader.class, Env.Resolver.class})
 class HttpSpecRunnerTest {
 
   static WireMockServer wireMockServer;
