@@ -56,7 +56,7 @@ public class JsonItemTestFactory<T extends JsonItem> {
 
   private Supplier<Stream<DynamicTest>> empty() {
     return () -> {
-      HttpResponseAssertion<?> assertion = target.testJson(jsonPathProduct(Optional::empty));
+      HttpResponseAssertion<?> assertion = jsonPathProduct(Optional::empty).assertBy(target);
 
       return Stream.of(
           dynamicTest(
@@ -74,7 +74,7 @@ public class JsonItemTestFactory<T extends JsonItem> {
   private Supplier<Stream<DynamicTest>> differentType() {
     return () -> {
       HttpResponseAssertion<?> assertion =
-          target.testJson(jsonPathProduct(() -> Optional.of(differentType)));
+          jsonPathProduct(() -> Optional.of(differentType)).assertBy(target);
 
       return Stream.of(
           dynamicTest(
@@ -92,7 +92,7 @@ public class JsonItemTestFactory<T extends JsonItem> {
   private Supplier<Stream<DynamicTest>> differentValue() {
     return () -> {
       HttpResponseAssertion<?> assertion =
-          target.testJson(jsonPathProduct(() -> Optional.of(differentValue)));
+          jsonPathProduct(() -> Optional.of(differentValue)).assertBy(target);
 
       return Stream.of(
           dynamicTest(
@@ -110,7 +110,7 @@ public class JsonItemTestFactory<T extends JsonItem> {
   private Supplier<Stream<DynamicTest>> sameValue() {
     return () -> {
       HttpResponseAssertion<?> assertion =
-          target.testJson(jsonPathProduct(() -> Optional.of(sameValue)));
+          jsonPathProduct(() -> Optional.of(sameValue)).assertBy(target);
 
       return Stream.of(
           dynamicTest(

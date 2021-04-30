@@ -24,7 +24,7 @@ public class HttpBodyJsonSpec implements HttpElementSpec {
     byte[] bytes = httpResponse.body();
     String body = new String(bytes, StandardCharsets.UTF_8);
     JsonPathProduct jsonPathProduct = jsonPathOperator.apply(body);
-    return expectedValue.testJson(jsonPathProduct);
+    return jsonPathProduct.assertBy(expectedValue);
   }
 
   @Override
