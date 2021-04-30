@@ -3,7 +3,6 @@ package org.mikeneck.httpspec.impl.specs.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
@@ -35,12 +34,10 @@ public class JsonItemTestFactory<T extends JsonItem> {
 
   @NotNull
   Stream<DynamicTest> allTests() {
-    return Stream.of(empty(), differentType(), differentValue(), sameValue())
-        .flatMap(Supplier::get);
+    return Stream.of(differentType(), differentValue(), sameValue()).flatMap(Supplier::get);
   }
 
-  private static JsonPathProduct jsonPathProduct(
-      @NotNull Supplier<@NotNull Optional<@NotNull JsonItem>> reader) {
+  private static JsonPathProduct jsonPathProduct(@NotNull Supplier<@NotNull JsonItem> jsonItem) {
     return new JsonPathProduct() {
       @Override
       public @NotNull String path() {
@@ -48,33 +45,15 @@ public class JsonItemTestFactory<T extends JsonItem> {
       }
 
       @Override
-      public @NotNull Optional<@NotNull JsonItem> get() {
-        return reader.get();
+      public @NotNull JsonItem get() {
+        return jsonItem.get();
       }
-    };
-  }
-
-  private Supplier<Stream<DynamicTest>> empty() {
-    return () -> {
-      HttpResponseAssertion<?> assertion = jsonPathProduct(Optional::empty).assertBy(target);
-
-      return Stream.of(
-          dynamicTest(
-              "test with null object -> failure",
-              () -> assertThat(assertion.isSuccess()).isFalse()),
-          dynamicTest(
-              "test with null object -> actual is null",
-              () -> assertThat(assertion.actual()).isNull()),
-          dynamicTest(
-              "test with null object -> expected is target object",
-              () -> assertThat(assertion.expected()).isEqualTo(target)));
     };
   }
 
   private Supplier<Stream<DynamicTest>> differentType() {
     return () -> {
-      HttpResponseAssertion<?> assertion =
-          jsonPathProduct(() -> Optional.of(differentType)).assertBy(target);
+      HttpResponseAssertion<?> assertion = jsonPathProduct(() -> differentType).assertBy(target);
 
       return Stream.of(
           dynamicTest(
@@ -91,8 +70,7 @@ public class JsonItemTestFactory<T extends JsonItem> {
 
   private Supplier<Stream<DynamicTest>> differentValue() {
     return () -> {
-      HttpResponseAssertion<?> assertion =
-          jsonPathProduct(() -> Optional.of(differentValue)).assertBy(target);
+      HttpResponseAssertion<?> assertion = jsonPathProduct(() -> differentValue).assertBy(target);
 
       return Stream.of(
           dynamicTest(
@@ -109,8 +87,7 @@ public class JsonItemTestFactory<T extends JsonItem> {
 
   private Supplier<Stream<DynamicTest>> sameValue() {
     return () -> {
-      HttpResponseAssertion<?> assertion =
-          jsonPathProduct(() -> Optional.of(sameValue)).assertBy(target);
+      HttpResponseAssertion<?> assertion = jsonPathProduct(() -> sameValue).assertBy(target);
 
       return Stream.of(
           dynamicTest(

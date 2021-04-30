@@ -2,15 +2,18 @@ package org.mikeneck.httpspec.impl.specs.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.mikeneck.httpspec.impl.specs.InvalidJsonPathException;
 import org.mikeneck.httpspec.impl.specs.JsonItem;
+import org.mikeneck.httpspec.impl.specs.JsonItemNotFoundException;
 import org.mikeneck.httpspec.impl.specs.JsonPathOperator;
 import org.mikeneck.httpspec.impl.specs.JsonPathProduct;
+import org.mikeneck.httpspec.impl.specs.UnexpectedBodyTextException;
 
 public class JsonPathOperatorImpl implements JsonPathOperator {
 
@@ -20,11 +23,9 @@ public class JsonPathOperatorImpl implements JsonPathOperator {
           .mappingProvider(new JacksonMappingProvider())
           .build();
 
-  @NotNull private final JsonPath jsonPath;
   @NotNull private final String path;
 
   public JsonPathOperatorImpl(@NotNull String path) {
-    this.jsonPath = JsonPath.compile(path);
     this.path = path;
   }
 
@@ -37,13 +38,22 @@ public class JsonPathOperatorImpl implements JsonPathOperator {
       }
 
       @Override
-      public @NotNull Optional<@NotNull JsonItem> get() {
+      public @NotNull JsonItem get() {
         try {
+          JsonPath jsonPath = JsonPath.compile(path);
           JsonNode node = jsonPath.read(json, CONFIGURATION);
-          JsonItem item = JsonItemFactory.fromNode(node);
-          return Optional.of(item);
-        } catch (PathNotFoundException | UnsupportedOperationException ignored) {
-          return Optional.empty();
+          return JsonItemFactory.fromNode(node);
+        } catch (IllegalArgumentException e) {
+          throw new UnexpectedBodyTextException(e.getMessage(), json);
+        } catch (PathNotFoundException e) {
+          String message = e.getMessage();
+          if (message.contains("No results for path: ")) {
+            throw new JsonItemNotFoundException(e, json);
+          } else {
+            throw new UnexpectedBodyTextException(e, json);
+          }
+        } catch (InvalidPathException e) {
+          throw new InvalidJsonPathException(e, json);
         }
       }
     };

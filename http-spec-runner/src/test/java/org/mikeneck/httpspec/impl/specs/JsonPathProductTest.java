@@ -11,7 +11,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import java.util.Optional;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -20,8 +19,7 @@ import org.mikeneck.httpspec.impl.specs.json.JsonItemFactory;
 
 class JsonPathProductTest {
 
-  private static JsonPathProduct jsonPathProduct(
-      @NotNull Supplier<@NotNull Optional<@NotNull JsonItem>> supplier) {
+  private static JsonPathProduct jsonPathProduct(Supplier<@NotNull JsonItem> jsonItem) {
     return new JsonPathProduct() {
       @Override
       public @NotNull String path() {
@@ -29,29 +27,15 @@ class JsonPathProductTest {
       }
 
       @Override
-      public @NotNull Optional<@NotNull JsonItem> get() {
-        return supplier.get();
+      public @NotNull JsonItem get() {
+        return jsonItem.get();
       }
     };
   }
 
   @Test
-  void getReturnsEmptyThenFailure() {
-    JsonPathProduct jsonPathProduct = jsonPathProduct(Optional::empty);
-
-    HttpResponseAssertion<@NotNull JsonItem> assertion =
-        jsonPathProduct.assertBy(JsonItemFactory.stringItem("item"));
-
-    assertAll(
-        () -> assertThat(assertion.isSuccess()).isFalse(),
-        () -> assertThat(assertion.actual()).isNull(),
-        () -> assertThat(assertion.expected()).isEqualTo(JsonItemFactory.stringItem("item")));
-  }
-
-  @Test
   void actualItemIsDifferentFromExpected() {
-    JsonPathProduct jsonPathProduct =
-        jsonPathProduct(() -> Optional.of(JsonItemFactory.intItem(200L)));
+    JsonPathProduct jsonPathProduct = jsonPathProduct(() -> JsonItemFactory.intItem(200L));
 
     HttpResponseAssertion<@NotNull JsonItem> assertion =
         jsonPathProduct.assertBy(JsonItemFactory.stringItem("item"));
@@ -64,8 +48,7 @@ class JsonPathProductTest {
 
   @Test
   void actualItemIsEqualToExpectedItem() {
-    JsonPathProduct jsonPathProduct =
-        jsonPathProduct(() -> Optional.of(JsonItemFactory.stringItem("item")));
+    JsonPathProduct jsonPathProduct = jsonPathProduct(() -> JsonItemFactory.stringItem("item"));
 
     HttpResponseAssertion<@NotNull JsonItem> assertion =
         jsonPathProduct.assertBy(JsonItemFactory.stringItem("item"));

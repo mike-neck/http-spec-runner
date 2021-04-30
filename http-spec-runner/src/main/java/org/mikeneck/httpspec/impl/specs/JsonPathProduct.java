@@ -1,6 +1,5 @@
 package org.mikeneck.httpspec.impl.specs;
 
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.mikeneck.httpspec.HttpResponseAssertion;
 
@@ -10,15 +9,12 @@ public interface JsonPathProduct {
   String path();
 
   @NotNull
-  Optional<@NotNull JsonItem> get();
+  JsonItem get()
+      throws UnexpectedBodyTextException, InvalidJsonPathException, JsonItemNotFoundException;
 
   default @NotNull HttpResponseAssertion<JsonItem> assertBy(@NotNull JsonItem expectedItem) {
     try {
-      Optional<@NotNull JsonItem> fromRemote = get();
-      if (fromRemote.isEmpty()) {
-        return new JsonItemResponseAssertionFailure(path(), expectedItem);
-      }
-      JsonItem actual = fromRemote.get();
+      JsonItem actual = get();
       if (expectedItem.equals(actual)) {
         return new JsonItemResponseAssertionSuccess(path(), expectedItem);
       } else {
