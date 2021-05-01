@@ -70,10 +70,11 @@ public class HttpResponseAssertionTest {
         () ->
             assertThat(assertion.actual())
                 .containsAll(Set.of(pair("foo", "FOO"), pair("bar", "BAR"), pair("baz", "BAZ"))),
-        () -> assertThat(assertion.description()).contains("expected: to contain '[foo,FOO]'"),
+        () ->
+            assertThat(assertion.description()).contains("expected: to contain 'header(foo: FOO)'"),
         () ->
             assertThat(assertion.description())
-                .contains("actual : ", "[bar,BAR], [foo,FOO], [baz,BAZ]"));
+                .contains("actual : ", "(bar: BAR), (foo: FOO), (baz: BAZ)"));
   }
 
   private static NameValuePair<String> pair(@NotNull String name, @NotNull String value) {
