@@ -3,6 +3,10 @@ plugins {
 }
 
 group = 'org.mikeneck.httpspec'
+version = {
+    def versionFromEnv = System.getenv('HTTP_SPEC_VERSION')
+    (versionFromEnv == null || versionFromEnv.empty)? '0.0.0': versionFromEnv
+}()
 
 repositories {
     mavenCentral()
