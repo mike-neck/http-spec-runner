@@ -1,5 +1,6 @@
 plugins {
     id 'java-project'
+    id 'maven-central-release'
 }
 
 dependencies {

@@ -1,0 +1,75 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+task sourceJar(type: Jar, group: 'archive', description: 'creates source jar') {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, group: 'archive', description: 'creates javadoc jar') {
+    archiveClassifier = 'javadoc'
+    from tasks.named('javadoc')
+}
+
+ext {
+    sonatype = [
+        url: System.getenv('SONATYPE_URL'),
+        user: System.getenv('SONATYPE_USER'),
+        password: System.getenv('SONATYPE_PASS'),
+    ]
+    canRelease = (sonatype.url != null && !sonatype.url.empty &&
+        sonatype.user != null && !sonatype.user.empty &&
+        sonatype.password != null && !sonatype.password.empty) as boolean
+}
+
+extensions.<PublishingExtension>configure('publishing') { PublishingExtension pubExt ->
+    pubExt.repositories {
+        if (canRelease) {
+            maven {
+                name = 'sonatype'
+                url = uri(sonatype.url)
+                credentials(PasswordCredentials) {
+                    username = sonatype.user
+                    password = sonatype.password
+                }
+            }
+        }
+    }
+    pubExt.publications { PublicationContainer cont ->
+        cont.create ('httpSpecRunner', MavenPublication) { MavenPublication pub ->
+            pub.from((components as SoftwareComponentContainer).getByName('java'))
+            pub.artifact(sourceJar)
+            pub.artifact(javadocJar)
+
+            pub.pom { MavenPom pom ->
+                pom.name = project.name
+                pom.packaging = 'jar'
+                pom.description = project.description
+                pom.url = 'https://github.com/mike-neck/http-spec-runner'
+
+                pom.licenses { MavenPomLicenseSpec spec ->
+                    spec.license { MavenPomLicense license ->
+                        license.name = 'MIT License'
+                        license.url = 'https://opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                pom.developers { MavenPomDeveloperSpec spec ->
+                    spec.developer { MavenPomDeveloper dev ->
+                        dev.id = 'mike-neck'
+                        dev.name = 'Shinya Mochida'
+                        dev.email = 'jkrt3333[at]gmail.com'
+                    }
+                }
+                
+                pom.scm { MavenPomScm mps ->
+                    mps.url = 'https://github.com/mike-neck/http-spec-runner'
+                    mps.connection = 'scm:git:https://github.com/mike-neck/http-spec-runner.git'
+                    mps.developerConnection = 'scm:git:https://github.com/mike-neck/http-spec-runner.git'
+                }
+            }
+        }
+    }
+}
