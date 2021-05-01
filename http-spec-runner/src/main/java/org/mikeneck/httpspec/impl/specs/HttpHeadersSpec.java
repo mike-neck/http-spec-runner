@@ -21,7 +21,7 @@ public class HttpHeadersSpec implements HttpElementSpec {
   public @NotNull HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse) {
     if (httpHeaderItem.canBeFoundIn(httpResponse)) {
       List<HttpHeaderItem> actualHeaders = httpHeaderItem.extractSameNameHeaders(httpResponse);
-      return HttpResponseAssertionFactory.itemFoundInCollection(httpHeaderItem, actualHeaders);
+      return HttpResponseAssertionFactory.pairFoundInCollection(httpHeaderItem, actualHeaders);
     } else {
       return HttpResponseAssertionFactory.failure(httpHeaderItem, null);
     }

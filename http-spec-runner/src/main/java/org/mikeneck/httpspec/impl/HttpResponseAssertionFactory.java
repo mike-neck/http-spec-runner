@@ -5,9 +5,10 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mikeneck.httpspec.HttpResponseAssertion;
+import org.mikeneck.httpspec.NameValuePair;
 import org.mikeneck.httpspec.impl.assertion.ExceptionOccurred;
 import org.mikeneck.httpspec.impl.assertion.Failure;
-import org.mikeneck.httpspec.impl.assertion.ItemFoundInCollection;
+import org.mikeneck.httpspec.impl.assertion.PairFoundInCollection;
 import org.mikeneck.httpspec.impl.assertion.Success;
 
 public interface HttpResponseAssertionFactory {
@@ -19,15 +20,17 @@ public interface HttpResponseAssertionFactory {
 
   @NotNull
   @SafeVarargs
-  static <@NotNull T> HttpResponseAssertion<Collection<T>> itemFoundInCollection(
-      @NotNull T item, @NotNull T... collection) {
-    return itemFoundInCollection(item, List.of(collection));
+  static <@NotNull S, @NotNull T extends NameValuePair<S>>
+      HttpResponseAssertion<Collection<T>> pairFoundInCollection(
+          @NotNull T item, @NotNull T... collection) {
+    return pairFoundInCollection(item, List.of(collection));
   }
 
   @NotNull
-  static <@NotNull T> HttpResponseAssertion<Collection<T>> itemFoundInCollection(
-      @NotNull T item, @NotNull Collection<@NotNull T> collection) {
-    return new ItemFoundInCollection<>(item, collection);
+  static <@NotNull S, @NotNull T extends NameValuePair<S>>
+      HttpResponseAssertion<Collection<T>> pairFoundInCollection(
+          @NotNull T item, @NotNull Collection<@NotNull T> collection) {
+    return new PairFoundInCollection<>(item, collection);
   }
 
   @NotNull

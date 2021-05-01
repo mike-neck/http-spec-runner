@@ -3,16 +3,19 @@ package org.mikeneck.httpspec.impl.assertion;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mikeneck.httpspec.HttpResponseAssertion;
+import org.mikeneck.httpspec.NameValuePair;
 
-public class ItemFoundInCollection<@NotNull T> implements HttpResponseAssertion<Collection<T>> {
+public class PairFoundInCollection<@NotNull S, @NotNull T extends NameValuePair<S>>
+    implements HttpResponseAssertion<Collection<T>> {
 
   private final @NotNull T item;
   private final @NotNull Collection<T> collection;
 
-  public ItemFoundInCollection(@NotNull T item, @NotNull Collection<T> collection) {
+  public PairFoundInCollection(@NotNull T item, @NotNull Collection<T> collection) {
     this.item = item;
     this.collection = collection;
   }
@@ -29,7 +32,12 @@ public class ItemFoundInCollection<@NotNull T> implements HttpResponseAssertion<
 
   @Override
   public @NotNull String description() {
-    return String.format("expected: to contain '%s'\nactual : %s", item, collection);
+    String expected = String.format("header(%s: %s)", item.name(), item.value());
+    String actual =
+        collection.stream()
+            .map(pair -> String.format("(%s: %s)", pair.name(), pair.value()))
+            .collect(Collectors.joining(", ", "headers ", ""));
+    return String.format("expected: to contain '%s'\nactual : %s", expected, actual);
   }
 
   @Override
@@ -50,9 +58,8 @@ public class ItemFoundInCollection<@NotNull T> implements HttpResponseAssertion<
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof org.mikeneck.httpspec.impl.assertion.ItemFoundInCollection)) return false;
-    org.mikeneck.httpspec.impl.assertion.ItemFoundInCollection<?> that =
-        (org.mikeneck.httpspec.impl.assertion.ItemFoundInCollection<?>) o;
+    if (!(o instanceof PairFoundInCollection)) return false;
+    PairFoundInCollection<?, ?> that = (PairFoundInCollection<?, ?>) o;
     return item.equals(that.item) && collection.equals(that.collection);
   }
 
