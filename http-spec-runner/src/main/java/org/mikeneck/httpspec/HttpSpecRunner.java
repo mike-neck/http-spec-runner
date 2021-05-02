@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface HttpSpecRunner {
 
+  @NotNull
   static Builder builder() {
     ServiceLoader<Builder> serviceLoader = ServiceLoader.load(Builder.class);
     return serviceLoader
