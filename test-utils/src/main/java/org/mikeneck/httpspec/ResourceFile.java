@@ -29,6 +29,7 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 @Target(ElementType.METHOD)
 public @interface ResourceFile {
 
+  @NotNull
   String value();
 
   class Loader implements ParameterResolver, AfterEachCallback {

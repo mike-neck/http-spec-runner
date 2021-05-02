@@ -12,6 +12,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
 
+    testImplementation project(':test-utils')
     testImplementation 'com.github.tomakehurst:wiremock-jre8:2.27.2'
     testImplementation 'org.assertj:assertj-core:3.19.0'
 }

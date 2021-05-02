@@ -19,6 +19,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mikeneck.httpspec.HttpSpecRunner;
+import org.mikeneck.httpspec.ResourceFile;
 
 @ExtendWith(ResourceFile.Loader.class)
 class JUnitJupiterAdapterTest {

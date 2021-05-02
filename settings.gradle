@@ -1,5 +1,7 @@
 rootProject.name = 'http-spec-root'
 
+include('test-utils')
+
 include('http-spec-runner')
 project(':http-spec-runner').name = 'http-spec-runner'
 
