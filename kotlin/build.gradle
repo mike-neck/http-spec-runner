@@ -1,0 +1,17 @@
+plugins {
+    id 'java-project'
+    id 'kotlin-project'
+    id 'maven-central-release'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':http-spec-runner')
+
+    testImplementation project(':test-utils')
+    testImplementation 'com.github.tomakehurst:wiremock-jre8:2.27.2'
+    testImplementation 'org.assertj:assertj-core:3.19.0'
+}

@@ -1,0 +1,45 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'    
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    formatter
+}
+
+dependencies {
+    implementation platform('org.jetbrains.kotlin:kotlin-bom')
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+
+    formatter 'com.facebook:ktfmt:0.24'
+}
+
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "11"
+    }
+}
+
+task ktfmt(type: JavaExec, group: 'formatter', description: 'formats kotlin source files') {
+    classpath(configurations.formatter)
+    mainClass = 'com.facebook.ktfmt.MainKt'
+        List<String> mains = sourceSets.main.allSource.filter { it.name.endsWith('.kt') }.files.collect { "$it" }
+        List<String> tests = sourceSets.test.allSource.filter { it.name.endsWith('.kt') }.files.collect { "$it" }
+
+    args([mains, tests].flatten() as List<String>)
+}
+
+tasks.named('googleJavaFormat').configure { it.enabled = false }
+
+test {
+    useJUnitPlatform()
+}

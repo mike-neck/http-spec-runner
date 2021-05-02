@@ -7,3 +7,6 @@ project(':http-spec-runner').name = 'http-spec-runner'
 
 include('junit-jupiter')
 project(':junit-jupiter').name = 'http-spec-runner-junit-jupiter'
+
+include('kotlin')
+project(':kotlin').name = 'http-spec-runner-kotlin'

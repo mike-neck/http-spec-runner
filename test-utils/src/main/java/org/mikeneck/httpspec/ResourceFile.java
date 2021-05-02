@@ -119,6 +119,9 @@ public @interface ResourceFile {
         return false;
       }
       String resourceName = resourceFile.value();
+      if (resourceName.isEmpty() || resourceName.isBlank()) {
+        return false;
+      }
       ClassLoader classLoader = Loader.class.getClassLoader();
       URL resource = classLoader.getResource(resourceName);
       if (resource == null) {
