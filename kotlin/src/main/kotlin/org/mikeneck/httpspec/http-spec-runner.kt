@@ -1,6 +1,24 @@
 package org.mikeneck.httpspec
 
+import java.io.File
 import java.net.http.HttpClient
+
+interface HttpSpecRunnerContext {
+  fun File.run()
+
+  fun File.runForResult(): List<VerificationResult>
+}
+
+internal object HttpSpecRunnerContextObject : HttpSpecRunnerContext {
+
+  override fun File.run() = HttpSpecRunner.from(this).run()
+
+  override fun File.runForResult(): List<VerificationResult> =
+      HttpSpecRunner.from(this).runForResult()
+}
+
+inline fun <T : Any> withHttpSpecRunner(runSpec: HttpSpecRunnerContext.() -> T): T =
+    HttpSpecRunnerContextObject.runSpec()
 
 fun httpSpecRunner(
     client: Client = Client { HttpClient.newHttpClient() },

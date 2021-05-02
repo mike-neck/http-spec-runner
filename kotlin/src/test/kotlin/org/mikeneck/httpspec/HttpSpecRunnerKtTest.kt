@@ -3,13 +3,14 @@ package org.mikeneck.httpspec
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
+import java.io.File
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(ResourceFile.Loader::class)
+@ExtendWith(ResourceFile.Loader::class, Env.Resolver::class)
 class HttpSpecRunnerKtTest {
 
   @Test
@@ -42,6 +43,26 @@ class HttpSpecRunnerKtTest {
       }
     }
     httpSpecRunner.run()
+  }
+
+  @Test
+  @ResourceFile("http-spec-runner-kt.json")
+  fun runRequestByFile(
+      responseBody: String,
+      @Env(
+          name = "CONFIG_YAML",
+          defaultValue = "http-spec-runner/src/test/resources/http-spec-runner.yaml")
+      configYaml: String
+  ) {
+    stubFor(
+        get(urlPathEqualTo("/path"))
+            .withHeader("authorization", containing("bearer 11aa22bb33cc"))
+            .willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withBody(responseBody)))
+
+    val configYamlFile = File(configYaml)
+
+    withHttpSpecRunner { configYamlFile.run() }
   }
 
   @BeforeEach
