@@ -1,6 +1,7 @@
 plugins {
     id 'java-project'
     id 'maven-central-release'
+    id 'sign-artifacts'
 }
 
 description = 'Testing library for http API with DSL and jsonpath assertion'

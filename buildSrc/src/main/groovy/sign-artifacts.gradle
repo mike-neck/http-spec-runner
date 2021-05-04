@@ -1,0 +1,18 @@
+plugins {
+    id 'maven-publish'
+    id 'signing'
+}
+
+ext {
+    pgp = [
+        armoredKey: System.getenv('PGP_ARMORED_KEY'),
+        passPhrase: System.getenv('PGP_PASS_PHRASE')
+    ]
+}
+
+if (pgp.armoredKey != null && pgp.passPhrase != null) {
+    extensions.<SigningExtension>configure('signing') { SigningExtension se ->
+        se.useInMemoryPgpKeys(pgp.armoredKey as String, pgp.passPhrase as String)
+        se.sign((publishing as PublishingExtension).publications.getByName('httpSpecRunner'))
+    }
+}

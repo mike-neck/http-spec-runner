@@ -1,0 +1,116 @@
+name: Release library
+on: 
+  workflow_dispatch:
+    inputs: 
+      type:
+        description: "release type(candidates for release: major/minor/patch, debug: debug)"
+        required: true
+
+jobs:
+  tag:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    if: ${{ contains("major minor patch", github.event.inputs.type) }} 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Current Version
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: current-version
+
+      - name: Next Version
+        uses: actions-ecosystem/action-bump-semver@v1
+        id: next-version
+        with:
+          current_version: ${{ steps.current-version.outputs.tag }}
+          level: ${{ github.event.inputs.type }}
+
+      - name: Push Tag
+        uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ steps.next-version.outputs.new_version }}
+          message: "Release version ${{ steps.next-version.outputs.new_version }}"
+
+  publish:
+    runs-on: ubuntu-20.04
+    needs:
+      - tag
+    timeout-minutes: 20
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: '11'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Release Version
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: release-version
+
+      - name: Cache Gradle Caches
+        uses: actions/cache@v2
+        with: 
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Publish
+        run: ./gradlew publish
+        env:
+          HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
+          SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+          SONATYPE_USER: "${{ secrets.SONATYPE_USER }}"
+          SONATYPE_PASS: "${{ secrets.SONATYPE_PASS }}"
+          PGP_ARMORED_KEY: "${{ secrets.PGP_ARMORED_KEY }}"
+          PGP_PASS_PHRASE: "${{ secrets.PGP_PASS_PHRASE }}"
+          GITHUB_URL: "https://maven.pkg.github.com/mike-neck/http-spec-runner"
+          GITHUB_USER: "${{ github.event.repository.owner.login }}"
+          GITHUB_PASS: "${{ secrets.GITHUB_TOKEN }}"
+
+  debug:
+    runs-on: ubuntu-20.04
+    if: ${{ 'debug' == github.event.inputs.type }}
+    timeout-minutes: 20
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: '11'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Cache Gradle Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Publish
+        run: ./gradlew publish
+        env:
+          HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
+          SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+          SONATYPE_USER: "${{ secrets.SONATYPE_USER }}"
+          SONATYPE_PASS: "${{ secrets.SONATYPE_PASS }}"
+          PGP_ARMORED_KEY: "${{ secrets.PGP_ARMORED_KEY }}"
+          PGP_PASS_PHRASE: "${{ secrets.PGP_PASS_PHRASE }}"
+          GITHUB_URL: "https://maven.pkg.github.com/mike-neck/http-spec-runner"
+          GITHUB_USER: "${{ github.event.repository.owner.login }}"
+          GITHUB_PASS: "${{ secrets.GITHUB_TOKEN }}"

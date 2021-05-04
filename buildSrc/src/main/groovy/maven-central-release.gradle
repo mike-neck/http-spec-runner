@@ -19,20 +19,39 @@ ext {
         user: System.getenv('SONATYPE_USER'),
         password: System.getenv('SONATYPE_PASS'),
     ]
-    canRelease = (sonatype.url != null && !sonatype.url.empty &&
+    mavenCentralCanRelease = (sonatype.url != null && !sonatype.url.empty &&
         sonatype.user != null && !sonatype.user.empty &&
         sonatype.password != null && !sonatype.password.empty) as boolean
+
+    github = [
+        url: System.getenv('GITHUB_URL'),
+        user: System.getenv('GITHUB_USER'),
+        password: System.getenv('GITHUB_PASS')
+    ]
+    githubCanRelease = (github.url != null && !github.url.empty &&
+        github.user != null && !github.user.empty &&
+        github.password != null && !github.password.empty) as boolean
 }
 
 extensions.<PublishingExtension>configure('publishing') { PublishingExtension pubExt ->
     pubExt.repositories {
-        if (canRelease) {
+        if (mavenCentralCanRelease) {
             maven {
                 name = 'sonatype'
                 url = uri(sonatype.url)
                 credentials(PasswordCredentials) {
                     username = sonatype.user
                     password = sonatype.password
+                }
+            }
+        }
+        if (githubCanRelease) {
+            maven {
+                name = 'github'
+                url = uri(github.url)
+                credentials(PasswordCredentials) {
+                    username = github.user
+                    password = github.password
                 }
             }
         }

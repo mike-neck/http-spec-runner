@@ -2,6 +2,7 @@ plugins {
     id 'java-project'
     id 'kotlin-project'
     id 'maven-central-release'
+    id 'sign-artifacts'
 }
 
 repositories {
