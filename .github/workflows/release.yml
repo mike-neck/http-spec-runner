@@ -93,6 +93,10 @@ jobs:
         with:
           ref: main
 
+      - name: Release Version
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: release-version
+
       - name: Cache Gradle Caches
         uses: actions/cache@v2
         with:
@@ -102,8 +106,21 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-
 
+      - name: Show version
+        run: ./gradlew showVersion help --group publishing
+        env:
+          HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
+          SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+          SONATYPE_USER: "${{ secrets.SONATYPE_USER }}"
+          SONATYPE_PASS: "${{ secrets.SONATYPE_PASS }}"
+          PGP_ARMORED_KEY: "${{ secrets.PGP_ARMORED_KEY }}"
+          PGP_PASS_PHRASE: "${{ secrets.PGP_PASS_PHRASE }}"
+          GITHUB_URL: "https://maven.pkg.github.com/mike-neck/http-spec-runner"
+          GITHUB_USER: "${{ github.event.repository.owner.login }}"
+          GITHUB_PASS: "${{ secrets.GITHUB_TOKEN }}"
+
       - name: Publish
-        run: ./gradlew publish
+        run: ./gradlew publish --dry-run
         env:
           HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
           SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"

@@ -71,3 +71,11 @@ if (runningOnGitHubActions as boolean) {
     }
     test.finalizedBy moveTestReport
 }
+
+task showVersion(group: 'help', description: 'shows library version') {
+    doLast {
+        logger.lifecycle(project.name)
+        logger.lifecycle("  version: ${project.version}")
+        logger.lifecycle("  group: ${project.group}")
+    }
+}
