@@ -107,7 +107,7 @@ jobs:
           restore-keys: gradle-
 
       - name: Show version
-        run: ./gradlew showVersion help --group publishing
+        run: ./gradlew showVersion tasks --group publishing
         env:
           HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
           SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
