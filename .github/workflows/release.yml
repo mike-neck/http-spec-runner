@@ -10,7 +10,7 @@ jobs:
   tag:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ contains("major minor patch", github.event.inputs.type) }} 
+    if: ${{ contains('major minor patch', github.event.inputs.type) }} 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
