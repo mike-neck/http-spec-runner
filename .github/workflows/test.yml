@@ -1,0 +1,36 @@
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 10
+    steps:
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: '11'
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Gradle Caches
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Run Tests
+        run: ./gradlew test
+        env: 
+          RUN_ON_GITHUB_ACTIONS: "yes"
+
+      - name: report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with: 
+          name: http-spec-test-reports
+          if-no-files-found: warn
+          path: build/reports

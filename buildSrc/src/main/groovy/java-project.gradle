@@ -1,3 +1,5 @@
+import javax.print.attribute.standard.Copies
+
 plugins {
     id 'java-library'
 }
@@ -51,4 +53,21 @@ task googleJavaFormat(group: 'formatter') {
             spec.args([['-r'], javaFiles].flatten())
         }
     }
+}
+
+ext {
+    runningOnGitHubActions = {
+        def githubEnv = System.getenv('RUN_ON_GITHUB_ACTIONS')
+        return githubEnv != null && !githubEnv.empty
+    }()
+}
+
+if (runningOnGitHubActions as boolean) {
+    task moveTestReport(type: Copy, group: 'verification', description: 'copies test') {
+        from tasks.withType(Test).named('test').map { Test t ->
+            t.reports.html.outputLocation
+        }
+        into "${rootProject.buildDir}/reports/${project.name}"
+    }
+    test.finalizedBy moveTestReport
 }
