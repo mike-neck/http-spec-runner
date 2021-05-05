@@ -68,14 +68,19 @@ jobs:
         uses: actions-ecosystem/action-get-latest-tag@v1
         id: release-version
 
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with: 
+          path: ~/.gradle/wrapper
+          key: gradle.wrapper-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: gradle.wrapper-
+
       - name: Cache Gradle Caches
         uses: actions/cache@v2
         with: 
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-
+          path: ~/.gradle/caches
+          key: gradle.caches-${{ hashFiles('**/*.gradle') }}
+          restore-keys: gradle.caches-
 
       - name: Publish
         run: ./gradlew publish
@@ -111,14 +116,19 @@ jobs:
         uses: actions-ecosystem/action-get-latest-tag@v1
         id: release-version
 
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: gradle.wrapper-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: gradle.wrapper-
+
       - name: Cache Gradle Caches
         uses: actions/cache@v2
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-
+          path: ~/.gradle/caches
+          key: gradle.caches-${{ hashFiles('**/*.gradle') }}
+          restore-keys: gradle.caches-
 
       - name: Show version
         run: ./gradlew showVersion tasks --group publishing
