@@ -5,6 +5,10 @@ on:
       type:
         description: "release type(candidates for release: major/minor/patch, fixing sonatype issue: override, debug: debug)"
         required: true
+      target:
+        description: "release target(candidates: github/sonatype)"
+        required: true
+        default: 'github,sonatype'
 
 jobs:
   tag:
@@ -77,6 +81,7 @@ jobs:
         run: ./gradlew publish
         env:
           HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
+          RELEASE_TARGET: "${{ github.event.inputs.target }}"
           SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
           SONATYPE_USER: "${{ secrets.SONATYPE_USER }}"
           SONATYPE_PASS: "${{ secrets.SONATYPE_PASS }}"
@@ -119,6 +124,7 @@ jobs:
         run: ./gradlew showVersion tasks --group publishing
         env:
           HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
+          RELEASE_TARGET: "${{ github.event.inputs.target }}"
           SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
           SONATYPE_USER: "${{ secrets.SONATYPE_USER }}"
           SONATYPE_PASS: "${{ secrets.SONATYPE_PASS }}"
@@ -132,6 +138,7 @@ jobs:
         run: ./gradlew publish --dry-run
         env:
           HTTP_SPEC_VERSION: "${{ steps.release-version.outputs.tag }}"
+          RELEASE_TARGET: "${{ github.event.inputs.target }}"
           SONATYPE_URL: "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
           SONATYPE_USER: "${{ secrets.SONATYPE_USER }}"
           SONATYPE_PASS: "${{ secrets.SONATYPE_PASS }}"

@@ -14,6 +14,7 @@ task javadocJar(type: Jar, group: 'archive', description: 'creates javadoc jar')
 }
 
 ext {
+    releaseTarget = "${System.getenv('RELEASE_TARGET')}" as String
     sonatype = [
         url: System.getenv('SONATYPE_URL'),
         user: System.getenv('SONATYPE_USER'),
@@ -21,6 +22,7 @@ ext {
     ]
     mavenCentralCanRelease = (sonatype.url != null && !sonatype.url.empty &&
         sonatype.user != null && !sonatype.user.empty &&
+        releaseTarget.contains('sonatype') &&
         sonatype.password != null && !sonatype.password.empty) as boolean
 
     github = [
@@ -30,6 +32,7 @@ ext {
     ]
     githubCanRelease = (github.url != null && !github.url.empty &&
         github.user != null && !github.user.empty &&
+        releaseTarget.contains('github') &&
         github.password != null && !github.password.empty) as boolean
 }
 
