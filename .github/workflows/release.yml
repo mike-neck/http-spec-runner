@@ -3,26 +3,34 @@ on:
   workflow_dispatch:
     inputs: 
       type:
-        description: "release type(candidates for release: major/minor/patch, debug: debug)"
+        description: "release type(candidates for release: major/minor/patch, fixing sonatype issue: override, debug: debug)"
         required: true
 
 jobs:
   tag:
     runs-on: ubuntu-20.04
     timeout-minutes: 10
-    if: ${{ contains('major minor patch', github.event.inputs.type) }} 
+    if: ${{ contains('major minor patch override', github.event.inputs.type) }} 
     steps:
+      - name: "${{ github.event.inputs.type }} Release"
+        run: echo "${RELEASE_TYPE}"
+        env: 
+          RELEASE_TYPE: ${{ github.event.inputs.type }}
+
       - name: Checkout
         uses: actions/checkout@v2
+        if: ${{ contains('major minor patch', github.event.inputs.type) }}
         with:
           ref: main
 
       - name: Current Version
         uses: actions-ecosystem/action-get-latest-tag@v1
+        if: ${{ contains('major minor patch', github.event.inputs.type) }}
         id: current-version
 
       - name: Next Version
         uses: actions-ecosystem/action-bump-semver@v1
+        if: ${{ contains('major minor patch', github.event.inputs.type) }}
         id: next-version
         with:
           current_version: ${{ steps.current-version.outputs.tag }}
@@ -30,6 +38,7 @@ jobs:
 
       - name: Push Tag
         uses: actions-ecosystem/action-push-tag@v1
+        if: ${{ contains('major minor patch', github.event.inputs.type) }}
         with:
           tag: ${{ steps.next-version.outputs.new_version }}
           message: "Release version ${{ steps.next-version.outputs.new_version }}"

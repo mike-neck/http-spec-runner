@@ -4,7 +4,7 @@ plugins {
     id 'sign-artifacts'
 }
 
-description = 'Testing library for http API with DSL and jsonpath assertion'
+description = file('description.txt').text
 
 dependencies {
     implementation ('com.jayway.jsonpath:json-path:2.5.0') {

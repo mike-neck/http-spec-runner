@@ -1,0 +1,1 @@
+Adaptor of http-spec-runner to JUnit Jupiter's DynamicTest.

@@ -65,7 +65,7 @@ extensions.<PublishingExtension>configure('publishing') { PublishingExtension pu
             pub.pom { MavenPom pom ->
                 pom.name = project.name
                 pom.packaging = 'jar'
-                pom.description = project.description
+                pom.description = project.file('description.txt').text
                 pom.url = 'https://github.com/mike-neck/http-spec-runner'
 
                 pom.licenses { MavenPomLicenseSpec spec ->
