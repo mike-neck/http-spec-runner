@@ -34,7 +34,7 @@ public interface Extension {
 
                           @Override
                           public void afterAllSpecs(
-                              @NotNull Iterable<@NotNull VerificationResult> results) {
+                              @NotNull Iterable<@NotNull ? extends VerificationResult> results) {
                             afterAll.accept(results);
                           }
                         };
@@ -46,7 +46,32 @@ public interface Extension {
 
   void afterEachSpec(@NotNull VerificationResult result);
 
-  void afterAllSpecs(@NotNull Iterable<@NotNull VerificationResult> results);
+  void afterAllSpecs(@NotNull Iterable<@NotNull ? extends VerificationResult> results);
+
+  default @NotNull Extension merge(@NotNull Extension nest) {
+    return Extension.builder()
+        .onCallBeforeAllSpecs(
+            all -> {
+              this.beforeAllSpecs(all);
+              nest.beforeAllSpecs(all);
+            })
+        .onCallBeforeEachSpecs(
+            each -> {
+              this.beforeEachSpec(each);
+              nest.beforeEachSpec(each);
+            })
+        .onCallAfterEachSpecs(
+            each -> {
+              nest.afterEachSpec(each);
+              this.afterEachSpec(each);
+            })
+        .onCallAfterAllSpecs(
+            all -> {
+              nest.afterAllSpecs(all);
+              this.afterAllSpecs(all);
+            })
+        .build();
+  }
 
   interface Builder {
     @NotNull

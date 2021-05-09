@@ -85,7 +85,7 @@ class HttpSpecRunnerImpl implements HttpSpecRunner, Extension {
   }
 
   @Override
-  public void afterAllSpecs(@NotNull Iterable<@NotNull VerificationResult> results) {
+  public void afterAllSpecs(@NotNull Iterable<@NotNull ? extends VerificationResult> results) {
     extension.afterAllSpecs(results);
   }
 }
