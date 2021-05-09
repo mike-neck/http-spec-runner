@@ -88,8 +88,7 @@ class ExtensionTest {
 
     Extension.BeforeAllSpecsRegistry registry = Extension.builder();
     Extension.Builder builder =
-        registry.onCallBeforeAllSpecs(
-            (Iterable<SpecName> iterable) -> iterable.forEach(specNames::add));
+        registry.onCallBeforeAllSpecs(iterable -> iterable.forEach(specNames::add));
 
     Extension extension = builder.build();
 
@@ -183,7 +182,7 @@ class ExtensionTest {
     List<String> specNames = new ArrayList<>();
 
     Extension.AfterAllSpecsRegistry registry = Extension.builder();
-    Consumer<Iterable<VerificationResult>> afterAll =
+    Consumer<? super Iterable<? extends VerificationResult>> afterAll =
         results -> results.forEach(result -> specNames.add(result.specName()));
     Extension.Builder builder = registry.onCallAfterAllSpecs(afterAll);
 

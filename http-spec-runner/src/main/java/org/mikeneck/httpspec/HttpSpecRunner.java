@@ -33,6 +33,9 @@ public interface HttpSpecRunner {
 
   void run();
 
+  @NotNull
+  Iterable<VerificationResult> runningAsIterable();
+
   interface BaseBuilder {
 
     @NotNull

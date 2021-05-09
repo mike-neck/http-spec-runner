@@ -15,6 +15,8 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -159,5 +161,50 @@ class HttpSpecRunnerTest {
     assertThatThrownBy(httpSpecRunner::run)
         .isInstanceOf(UnexpectedResponseException.class)
         .hasMessageContaining("getting path resource with paging parameters");
+  }
+
+  @ResourceFile("json-path-reader-impl-test/read.json")
+  @Test
+  void asIterable(String responseJson) {
+    stubFor(
+        get(urlPathEqualTo("/path"))
+            .withQueryParams(Map.of("q", equalTo("test")))
+            .willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withBody(responseJson)));
+
+    HttpSpecRunner.Builder builder = HttpSpecRunner.builder();
+    builder.addSpec(
+        spec -> {
+          spec.name("getting path resource with paging parameters");
+          spec.request()
+              .get(
+                  "http://localhost:8080/path",
+                  request -> {
+                    request.query("q", "test");
+                    request.query("page", 4);
+                    request.query("limit", 10);
+                    request.header("accept", "application/json");
+                    request.header("authorization", "bearer 11aa22bb33cc");
+                  });
+          spec.response(
+              response -> {
+                response.status(200);
+                response.header("content-type", "application/json");
+                response.jsonBody(jsonBody -> jsonBody.path("$.firstName").toBe("John"));
+                response.jsonBody(jsonBody -> jsonBody.path("$.lastName").toBe("doe"));
+              });
+        });
+    HttpSpecRunner httpSpecRunner = builder.build();
+    @NotNull
+    Iterable<@NotNull VerificationResult> verificationResults = httpSpecRunner.runningAsIterable();
+
+    Stream<VerificationResult> stream =
+        StreamSupport.stream(verificationResults.spliterator(), false);
+
+    assertThat(stream)
+        .hasSize(1)
+        .satisfiesExactly(
+            result -> assertThat(result.specName()).contains("getting path resource with paging"))
+        .satisfiesExactly(result -> assertThat(result.allAssertions()).hasSize(4));
   }
 }
