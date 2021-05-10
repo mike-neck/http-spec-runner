@@ -34,7 +34,10 @@ public interface HttpSpecRunner {
   void run();
 
   @NotNull
-  Iterable<VerificationResult> runningAsIterable();
+  Iterable<@NotNull VerificationResult> runningAsIterable();
+
+  @NotNull
+  HttpSpecRunner addExtension(@NotNull Extension anotherExtension);
 
   interface BaseBuilder {
 

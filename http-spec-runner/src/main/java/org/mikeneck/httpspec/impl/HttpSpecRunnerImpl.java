@@ -70,6 +70,12 @@ class HttpSpecRunnerImpl implements HttpSpecRunner, Extension {
   }
 
   @Override
+  public @NotNull HttpSpecRunner addExtension(@NotNull Extension anotherExtension) {
+    Extension extension = this.extension.merge(anotherExtension);
+    return new HttpSpecRunnerImpl(client, extension, httpSpecVerifiers);
+  }
+
+  @Override
   public void beforeAllSpecs(@NotNull Iterable<@NotNull ? extends SpecName> allSpecNames) {
     extension.beforeAllSpecs(allSpecNames);
   }
