@@ -8,6 +8,8 @@ import org.mikeneck.httpspec.impl.HttpResponseAssertionFactory;
 
 public class HttpStatusSpec implements HttpElementSpec {
 
+  private static final String SUBTITLE = "http status";
+
   private final int expectedStatusCode;
 
   public HttpStatusSpec(int expectedStatusCode) {
@@ -19,9 +21,9 @@ public class HttpStatusSpec implements HttpElementSpec {
   public HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse) {
     int actualStatusCode = httpResponse.statusCode();
     if (actualStatusCode == expectedStatusCode) {
-      return HttpResponseAssertionFactory.success(expectedStatusCode);
+      return HttpResponseAssertionFactory.success(SUBTITLE, expectedStatusCode);
     } else {
-      return HttpResponseAssertionFactory.failure(expectedStatusCode, actualStatusCode);
+      return HttpResponseAssertionFactory.failure(SUBTITLE, expectedStatusCode, actualStatusCode);
     }
   }
 

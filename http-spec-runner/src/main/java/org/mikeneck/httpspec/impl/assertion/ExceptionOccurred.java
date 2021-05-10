@@ -7,10 +7,13 @@ import org.mikeneck.httpspec.HttpResponseAssertion;
 
 public class ExceptionOccurred<@NotNull T> implements HttpResponseAssertion<T> {
 
+  private final @NotNull String subtitle;
   private final @NotNull T expected;
   private @NotNull final Throwable throwable;
 
-  public ExceptionOccurred(@NotNull T expected, @NotNull Throwable throwable) {
+  public ExceptionOccurred(
+      @NotNull String subtitle, @NotNull T expected, @NotNull Throwable throwable) {
+    this.subtitle = subtitle;
     this.expected = expected;
     this.throwable = throwable;
   }
@@ -18,6 +21,11 @@ public class ExceptionOccurred<@NotNull T> implements HttpResponseAssertion<T> {
   @Override
   public boolean isSuccess() {
     return false;
+  }
+
+  @Override
+  public @NotNull String subtitle() {
+    return subtitle;
   }
 
   @Override

@@ -6,6 +6,9 @@ import org.jetbrains.annotations.Nullable;
 public interface HttpResponseAssertion<@NotNull T> {
 
   @NotNull
+  String subtitle();
+
+  @NotNull
   T expected();
 
   @Nullable

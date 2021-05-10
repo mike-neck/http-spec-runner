@@ -19,11 +19,13 @@ public class HttpHeadersSpec implements HttpElementSpec {
 
   @Override
   public @NotNull HttpResponseAssertion<?> apply(@NotNull HttpResponse<byte[]> httpResponse) {
+    String subtitle = String.format("http header(%s)", httpHeaderItem.name());
     if (httpHeaderItem.canBeFoundIn(httpResponse)) {
       List<HttpHeaderItem> actualHeaders = httpHeaderItem.extractSameNameHeaders(httpResponse);
-      return HttpResponseAssertionFactory.pairFoundInCollection(httpHeaderItem, actualHeaders);
+      return HttpResponseAssertionFactory.pairFoundInCollection(
+          subtitle, httpHeaderItem, actualHeaders);
     } else {
-      return HttpResponseAssertionFactory.failure(httpHeaderItem, null);
+      return HttpResponseAssertionFactory.failure(subtitle, httpHeaderItem, null);
     }
   }
 

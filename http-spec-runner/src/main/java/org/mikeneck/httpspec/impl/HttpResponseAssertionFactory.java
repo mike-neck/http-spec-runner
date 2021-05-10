@@ -14,32 +14,35 @@ import org.mikeneck.httpspec.impl.assertion.Success;
 public interface HttpResponseAssertionFactory {
 
   @NotNull
-  static <@NotNull T> HttpResponseAssertion<T> success(@NotNull T expected) {
-    return new Success<>(expected);
+  static <@NotNull T> HttpResponseAssertion<T> success(
+      @NotNull String subtitle, @NotNull T expected) {
+    return new Success<>(subtitle, expected);
   }
 
   @NotNull
   @SafeVarargs
   static <@NotNull S, @NotNull T extends NameValuePair<S>>
       HttpResponseAssertion<Collection<T>> pairFoundInCollection(
-          @NotNull T item, @NotNull T... collection) {
-    return pairFoundInCollection(item, List.of(collection));
+          @NotNull String subtitle, @NotNull T item, @NotNull T... collection) {
+    return pairFoundInCollection(subtitle, item, List.of(collection));
   }
 
   @NotNull
   static <@NotNull S, @NotNull T extends NameValuePair<S>>
       HttpResponseAssertion<Collection<T>> pairFoundInCollection(
-          @NotNull T item, @NotNull Collection<@NotNull T> collection) {
-    return new PairFoundInCollection<>(item, collection);
+          @NotNull String subtitle, @NotNull T item, @NotNull Collection<@NotNull T> collection) {
+    return new PairFoundInCollection<>(subtitle, item, collection);
   }
 
   @NotNull
-  static <@NotNull T> HttpResponseAssertion<T> failure(@NotNull T expected, @Nullable T actual) {
-    return new Failure<>(expected, actual);
+  static <@NotNull T> HttpResponseAssertion<T> failure(
+      @NotNull String subtitle, @NotNull T expected, @Nullable T actual) {
+    return new Failure<>(subtitle, expected, actual);
   }
 
   @NotNull
-  static <@NotNull T> HttpResponseAssertion<T> exception(@NotNull T expected, Throwable throwable) {
-    return new ExceptionOccurred<>(expected, throwable);
+  static <@NotNull T> HttpResponseAssertion<T> exception(
+      @NotNull String subtitle, @NotNull T expected, Throwable throwable) {
+    return new ExceptionOccurred<>(subtitle, expected, throwable);
   }
 }

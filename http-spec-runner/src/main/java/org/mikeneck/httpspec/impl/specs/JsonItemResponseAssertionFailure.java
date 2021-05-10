@@ -23,6 +23,11 @@ public class JsonItemResponseAssertionFailure implements HttpResponseAssertion<J
   }
 
   @Override
+  public @NotNull String subtitle() {
+    return String.format("json item(%s)", path);
+  }
+
+  @Override
   public @NotNull JsonItem expected() {
     return expected;
   }
