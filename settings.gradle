@@ -10,3 +10,6 @@ project(':junit-jupiter').name = 'http-spec-runner-junit-jupiter'
 
 include('kotlin')
 project(':kotlin').name = 'http-spec-runner-kotlin'
+
+include('cli')
+project(':cli').name = 'http-spec-runner-cli'
