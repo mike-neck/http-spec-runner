@@ -1,6 +1,8 @@
 package org.mikeneck.httpspec;
 
+import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface Stdout {
 
@@ -10,65 +12,123 @@ public interface Stdout {
 
   void normal(@NotNull String line);
 
+  @SuppressWarnings("Convert2MethodRef")
   static Color withMode(boolean quiet) {
     if (quiet) {
-      return color -> Impl.QUIET;
+      return color -> destination -> Impl.QUIET.toStdout(destination);
     } else {
-      return color -> {
-        if (color) {
-          return Impl.COLOR;
-        } else {
-          return Impl.NORMAL;
+      return color ->
+          destination -> {
+            if (color) {
+              return Impl.COLOR.toStdout(destination);
+            } else {
+              return Impl.NORMAL.toStdout(destination);
+            }
+          };
+    }
+  }
+
+  interface Color {
+    Out withColor(boolean color);
+  }
+
+  interface Out {
+    Stdout outputTo(@NotNull Consumer<@NotNull String> destination);
+  }
+
+  interface Mixer {
+    @Nullable
+    String success(@NotNull String line);
+
+    @Nullable
+    String failure(@NotNull String line);
+
+    @Nullable
+    String normal(@NotNull String line);
+
+    default Stdout toStdout(@NotNull Consumer<@NotNull String> destination) {
+      final Mixer mixer = this;
+      return new Stdout() {
+
+        @Override
+        public String toString() {
+          return mixer.toString();
+        }
+
+        @Override
+        public void success(@NotNull String line) {
+          String text = mixer.success(line);
+          if (text != null) {
+            destination.accept(text);
+          }
+        }
+
+        @Override
+        public void failure(@NotNull String line) {
+          String text = mixer.failure(line);
+          if (text != null) {
+            destination.accept(text);
+          }
+        }
+
+        @Override
+        public void normal(@NotNull String line) {
+          String text = mixer.normal(line);
+          if (text != null) {
+            destination.accept(text);
+          }
         }
       };
     }
   }
 
-  interface Color {
-    Stdout withColor(boolean color);
-  }
-
-  enum Impl implements Stdout {
+  enum Impl implements Mixer {
     QUIET {
       @Override
-      public void success(@NotNull String line) {}
+      public @Nullable String success(@NotNull String line) {
+        return null;
+      }
 
       @Override
-      public void failure(@NotNull String line) {}
+      public @Nullable String failure(@NotNull String line) {
+        return null;
+      }
 
       @Override
-      public void normal(@NotNull String line) {}
+      public @Nullable String normal(@NotNull String line) {
+        return null;
+      }
     },
     COLOR {
       @Override
-      public void success(@NotNull String line) {
-        System.out.printf("\u001B[32m%s\u001B[0m\n", line);
+      public @NotNull String success(@NotNull String line) {
+        return String.format("\u001B[32m%s\u001B[0m", line);
       }
 
       @Override
-      public void failure(@NotNull String line) {
-        System.out.printf("\u001B[31m%s\u001B[0m\n", line);
+      public @NotNull String failure(@NotNull String line) {
+        return String.format("\u001B[31m%s\u001B[0m", line);
       }
 
       @Override
-      public void normal(@NotNull String line) {
-        System.out.println(line);
+      public @NotNull String normal(@NotNull String line) {
+        return line;
       }
     },
     NORMAL {
       @Override
-      public void success(@NotNull String line) {
-        System.out.println(line);
+      public @NotNull String success(@NotNull String line) {
+        return line;
       }
 
       @Override
-      public void failure(@NotNull String line) {
-        System.out.println(line);
+      public @NotNull String failure(@NotNull String line) {
+        return line;
       }
 
       @Override
-      public void normal(@NotNull String line) {
-        System.out.println(line);
+      public @NotNull String normal(@NotNull String line) {
+        return line;
       }
     },
   }
