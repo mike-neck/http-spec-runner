@@ -2,6 +2,7 @@ package org.mikeneck.httpspec.impl.specs.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -43,7 +44,7 @@ public class JsonPathOperatorImpl implements JsonPathOperator {
           JsonPath jsonPath = JsonPath.compile(path);
           JsonNode node = jsonPath.read(json, CONFIGURATION);
           return JsonItemFactory.fromNode(node);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | InvalidJsonException e) {
           throw new UnexpectedBodyTextException(e.getMessage(), json);
         } catch (PathNotFoundException e) {
           String message = e.getMessage();

@@ -1,6 +1,7 @@
 package org.mikeneck.httpspec;
 
 import java.io.File;
+import java.net.http.HttpClient;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
@@ -18,14 +19,32 @@ public interface HttpSpecRunner {
                 new IllegalStateException("Implementation of HttpSpecRunner.Builder is not found"));
   }
 
-  static HttpSpecRunner from(File yamlFile) {
+  static HttpSpecRunner from(@NotNull File yamlFile) {
+    @SuppressWarnings("NullableProblems")
+    Client client = HttpClient::newHttpClient;
+    return from(yamlFile, client, Extension.noOp());
+  }
+
+  @SuppressWarnings("NullableProblems")
+  static HttpSpecRunner from(@NotNull File yamlFile, @NotNull Extension extension) {
+    @SuppressWarnings("NullableProblems")
+    Client client = HttpClient::newHttpClient;
+    return from(yamlFile, client, extension);
+  }
+
+  static HttpSpecRunner from(@NotNull File yamlFile, @NotNull Client client) {
+    return from(yamlFile, client, Extension.noOp());
+  }
+
+  static HttpSpecRunner from(
+      @NotNull File yamlFile, @NotNull Client client, @NotNull Extension extension) {
     ServiceLoader<FileLoader> serviceLoader = ServiceLoader.load(FileLoader.class);
     FileLoader fileLoader =
         serviceLoader
             .findFirst()
             .orElseThrow(
                 () -> new IllegalStateException("implementation of FileLoader is not found"));
-    return fileLoader.load(yamlFile);
+    return fileLoader.load(yamlFile, client, extension);
   }
 
   @NotNull

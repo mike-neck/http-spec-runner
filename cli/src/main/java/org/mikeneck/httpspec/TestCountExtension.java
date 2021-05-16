@@ -51,9 +51,10 @@ public class TestCountExtension implements Extension {
       stdout.success(String.format("failed-assertions: %6d", 0));
     } else {
       stdout.failure("spec runner finished");
-      stdout.normal(String.format("all-spec         : %6d", successSpecCount));
+      stdout.normal(String.format("all-spec         : %6d", successSpecCount + failedSpecCount));
       stdout.failure(String.format("failed-spec      : %6d", failedSpecCount));
-      stdout.normal(String.format("all-assertions   : %6d", successAssertionCount));
+      stdout.normal(
+          String.format("all-assertions   : %6d", successAssertionCount + failedAssertionCount));
       stdout.failure(String.format("failed-assertions: %6d", failedAssertionCount));
     }
   }
