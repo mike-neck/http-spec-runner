@@ -1,0 +1,22 @@
+spec:
+  - name: 'getting path resource with paging parameters'
+    request:
+      get: 'http://localhost:8080/path'
+      queries:
+        q: test
+      headers:
+        accept: application/json
+        authorization: bearer 11aa22bb33cc
+    response:
+      status: 200
+      headers:
+        content-type: application/json
+      body:
+        - path: $.firstName
+          expect:
+            type: string
+            value: John
+        - path: $.age
+          expect:
+            type: number
+            value: 26

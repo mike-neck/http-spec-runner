@@ -2,6 +2,7 @@ package org.mikeneck.httpspec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.TestFactory;
 class ExtensionTest {
 
   static DynamicTest noException(String name, Runnable runnable) {
-    return DynamicTest.dynamicTest(name, () -> assertThatNoException().isThrownBy(runnable::run));
+    return dynamicTest(name, () -> assertThatNoException().isThrownBy(runnable::run));
   }
 
   static <@NotNull T> Iterable<T> throwingIterable(String message) {
@@ -88,13 +89,12 @@ class ExtensionTest {
 
     Extension.BeforeAllSpecsRegistry registry = Extension.builder();
     Extension.Builder builder =
-        registry.onCallBeforeAllSpecs(
-            (Iterable<SpecName> iterable) -> iterable.forEach(specNames::add));
+        registry.onCallBeforeAllSpecs(iterable -> iterable.forEach(specNames::add));
 
     Extension extension = builder.build();
 
     return List.of(
-        DynamicTest.dynamicTest(
+        dynamicTest(
             "beforeAllSpecs",
             () -> extension.beforeAllSpecs(List.of(() -> "test1", () -> "test2"))),
         noException(
@@ -108,7 +108,7 @@ class ExtensionTest {
             "afterEach",
             () -> extension.afterEachSpec(new ThrowingVerificationResult("afterEach"))),
         noException("afterAll", () -> extension.afterAllSpecs(throwingIterable("afterAll"))),
-        DynamicTest.dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
+        dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
   }
 
   @SuppressWarnings("NullableProblems")
@@ -127,7 +127,7 @@ class ExtensionTest {
     return List.of(
         noException(
             "beforeAllSpecs", () -> extension.beforeAllSpecs(throwingIterable("beforeAll"))),
-        DynamicTest.dynamicTest(
+        dynamicTest(
             "beforeEachSpec",
             () -> {
               while (names.hasNext()) {
@@ -138,7 +138,7 @@ class ExtensionTest {
             "afterEach",
             () -> extension.afterEachSpec(new ThrowingVerificationResult("afterEach"))),
         noException("afterAll", () -> extension.afterAllSpecs(throwingIterable("afterAll"))),
-        DynamicTest.dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
+        dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
   }
 
   @TestFactory
@@ -167,7 +167,7 @@ class ExtensionTest {
                     () -> {
                       throw new RuntimeException("beforeEach");
                     })),
-        DynamicTest.dynamicTest(
+        dynamicTest(
             "afterEach",
             () -> {
               while (results.hasNext()) {
@@ -175,7 +175,7 @@ class ExtensionTest {
               }
             }),
         noException("afterAll", () -> extension.afterAllSpecs(throwingIterable("afterAll"))),
-        DynamicTest.dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
+        dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
   }
 
   @TestFactory
@@ -183,7 +183,7 @@ class ExtensionTest {
     List<String> specNames = new ArrayList<>();
 
     Extension.AfterAllSpecsRegistry registry = Extension.builder();
-    Consumer<Iterable<VerificationResult>> afterAll =
+    Consumer<? super Iterable<? extends VerificationResult>> afterAll =
         results -> results.forEach(result -> specNames.add(result.specName()));
     Extension.Builder builder = registry.onCallAfterAllSpecs(afterAll);
 
@@ -206,6 +206,43 @@ class ExtensionTest {
             "afterEach",
             () -> extension.afterEachSpec(new ThrowingVerificationResult("afterEach"))),
         noException("afterAll", () -> extension.afterAllSpecs(results)),
-        DynamicTest.dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
+        dynamicTest("size should be 2", () -> assertThat(specNames).hasSize(2)));
+  }
+
+  @TestFactory
+  Iterable<DynamicTest> wrap() {
+    int[] beforeAll = new int[] {0};
+    int[] beforeEach = new int[] {0};
+    int[] afterEach = new int[] {0};
+    int[] afterAll = new int[] {0};
+
+    Extension wrapper =
+        Extension.builder()
+            .onCallBeforeAllSpecs(all -> beforeAll[0] = 10)
+            .onCallBeforeEachSpecs(each -> beforeEach[0] = 100)
+            .onCallAfterEachSpecs(each -> assertThat(afterEach).containsExactly(20))
+            .onCallAfterAllSpecs(all -> assertThat(afterAll).containsExactly(200))
+            .build();
+
+    Extension target =
+        Extension.builder()
+            .onCallBeforeAllSpecs(all -> assertThat(beforeAll).containsExactly(10))
+            .onCallBeforeEachSpecs(each -> assertThat(beforeEach).containsExactly(100))
+            .onCallAfterEachSpecs(each -> afterEach[0] = 20)
+            .onCallAfterAllSpecs(all -> afterAll[0] = 200)
+            .build();
+
+    Extension extension = wrapper.merge(target);
+
+    SpecName specName = () -> "test";
+    MockVerificationResult verification = new MockVerificationResult("test");
+
+    return List.of(
+        dynamicTest(
+            "beforeAll: wrapper -> target", () -> extension.beforeAllSpecs(List.of(specName))),
+        dynamicTest("beforeEach: wrapper -> target", () -> extension.beforeEachSpec(specName)),
+        dynamicTest("afterEach: target -> wrapper", () -> extension.afterEachSpec(verification)),
+        dynamicTest(
+            "afterAll: target -> wrapper", () -> extension.afterAllSpecs(List.of(verification))));
   }
 }

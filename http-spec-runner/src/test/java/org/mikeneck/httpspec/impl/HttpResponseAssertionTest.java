@@ -17,7 +17,7 @@ public class HttpResponseAssertionTest {
   @Test
   void success() {
     HttpResponseAssertion<Integer> httpResponseAssertion =
-        HttpResponseAssertionFactory.success(200);
+        HttpResponseAssertionFactory.success("http-status", 200);
     assertAll(
         () -> assertThat(httpResponseAssertion.expected()).isEqualTo(200),
         () -> assertThat(httpResponseAssertion.actual()).isEqualTo(200),
@@ -25,13 +25,14 @@ public class HttpResponseAssertionTest {
             assertThat(httpResponseAssertion.description())
                 .isEqualTo("expected: 200\nactual : 200"),
         () ->
-            assertThat(httpResponseAssertion).isEqualTo(HttpResponseAssertionFactory.success(200)));
+            assertThat(httpResponseAssertion)
+                .isEqualTo(HttpResponseAssertionFactory.success("http-status", 200)));
   }
 
   @Test
   void failure() {
     HttpResponseAssertion<Integer> httpResponseAssertion =
-        HttpResponseAssertionFactory.failure(200, 404);
+        HttpResponseAssertionFactory.failure("http-status", 200, 404);
     assertAll(
         () -> assertThat(httpResponseAssertion.expected()).isEqualTo(200),
         () -> assertThat(httpResponseAssertion.actual()).isEqualTo(404),
@@ -40,14 +41,14 @@ public class HttpResponseAssertionTest {
                 .isEqualTo("expected: 200\nactual : 404"),
         () ->
             assertThat(httpResponseAssertion)
-                .isNotEqualTo(HttpResponseAssertionFactory.success(200)));
+                .isNotEqualTo(HttpResponseAssertionFactory.success("http-status", 200)));
   }
 
   @Test
   void error() {
     Exception exception = new IOException("http error");
     HttpResponseAssertion<Integer> httpResponseAssertion =
-        HttpResponseAssertionFactory.exception(200, exception);
+        HttpResponseAssertionFactory.exception("http call", 200, exception);
     assertAll(
         () -> assertThat(httpResponseAssertion.expected()).isEqualTo(200),
         () -> assertThat(httpResponseAssertion.actual()).isNull(),
@@ -56,14 +57,18 @@ public class HttpResponseAssertionTest {
                 .isEqualTo("expected: 200\nbut exception: " + exception),
         () ->
             assertThat(httpResponseAssertion)
-                .isNotEqualTo(HttpResponseAssertionFactory.success(200)));
+                .isNotEqualTo(HttpResponseAssertionFactory.success("http-status", 200)));
   }
 
   @Test
   void pairFoundInCollection() {
     HttpResponseAssertion<Collection<NameValuePair<String>>> assertion =
         HttpResponseAssertionFactory.pairFoundInCollection(
-            pair("foo", "FOO"), pair("bar", "BAR"), pair("foo", "FOO"), pair("baz", "BAZ"));
+            "http header",
+            pair("foo", "FOO"),
+            pair("bar", "BAR"),
+            pair("foo", "FOO"),
+            pair("baz", "BAZ"));
     assertAll(
         () -> assertThat(assertion.isSuccess()).isTrue(),
         () -> assertThat(assertion.expected()).containsOnly(pair("foo", "FOO")),

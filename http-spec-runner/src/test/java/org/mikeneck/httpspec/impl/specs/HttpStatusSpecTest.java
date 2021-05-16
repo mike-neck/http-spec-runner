@@ -17,7 +17,7 @@ class HttpStatusSpecTest {
 
     HttpResponseAssertion<?> result = spec.apply(response);
 
-    assertThat(result).isEqualTo(HttpResponseAssertionFactory.success(200));
+    assertThat(result).isEqualTo(HttpResponseAssertionFactory.success("http status", 200));
   }
 
   @Test
@@ -27,7 +27,7 @@ class HttpStatusSpecTest {
 
     HttpResponseAssertion<?> result = spec.apply(response);
 
-    assertThat(result).isEqualTo(HttpResponseAssertionFactory.success(404));
+    assertThat(result).isEqualTo(HttpResponseAssertionFactory.success("http status", 404));
   }
 
   @Test
@@ -37,7 +37,7 @@ class HttpStatusSpecTest {
 
     HttpResponseAssertion<?> result = spec.apply(response);
 
-    assertThat(result).isEqualTo(HttpResponseAssertionFactory.failure(200, 404));
+    assertThat(result).isEqualTo(HttpResponseAssertionFactory.failure("http status", 200, 404));
   }
 
   @Test

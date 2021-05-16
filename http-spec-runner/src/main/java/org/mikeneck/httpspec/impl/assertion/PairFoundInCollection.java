@@ -12,12 +12,20 @@ import org.mikeneck.httpspec.NameValuePair;
 public class PairFoundInCollection<@NotNull S, @NotNull T extends NameValuePair<S>>
     implements HttpResponseAssertion<Collection<T>> {
 
+  private final @NotNull String subtitle;
   private final @NotNull T item;
   private final @NotNull Collection<T> collection;
 
-  public PairFoundInCollection(@NotNull T item, @NotNull Collection<T> collection) {
+  public PairFoundInCollection(
+      @NotNull String subtitle, @NotNull T item, @NotNull Collection<T> collection) {
+    this.subtitle = subtitle;
     this.item = item;
     this.collection = collection;
+  }
+
+  @Override
+  public @NotNull String subtitle() {
+    return subtitle;
   }
 
   @Override

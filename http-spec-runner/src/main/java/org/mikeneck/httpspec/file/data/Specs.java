@@ -59,6 +59,6 @@ public class Specs implements Iterable<Spec>, HttpSpecRunner.BaseBuilder {
             httpSpec.response(s.response);
           });
     }
-    return builder.build();
+    return builder.build(client, extension);
   }
 }

@@ -65,7 +65,18 @@ class HttpSpecRunnerImpl implements HttpSpecRunner, Extension {
   }
 
   @Override
-  public void beforeAllSpecs(@NotNull Iterable<@NotNull SpecName> allSpecNames) {
+  public @NotNull Iterable<VerificationResult> runningAsIterable() {
+    return new HttpSpecRunnerIterableImpl(client, httpSpecVerifiers, extension);
+  }
+
+  @Override
+  public @NotNull HttpSpecRunner addExtension(@NotNull Extension anotherExtension) {
+    Extension extension = this.extension.merge(anotherExtension);
+    return new HttpSpecRunnerImpl(client, extension, httpSpecVerifiers);
+  }
+
+  @Override
+  public void beforeAllSpecs(@NotNull Iterable<@NotNull ? extends SpecName> allSpecNames) {
     extension.beforeAllSpecs(allSpecNames);
   }
 
@@ -80,7 +91,7 @@ class HttpSpecRunnerImpl implements HttpSpecRunner, Extension {
   }
 
   @Override
-  public void afterAllSpecs(@NotNull Iterable<@NotNull VerificationResult> results) {
+  public void afterAllSpecs(@NotNull Iterable<@NotNull ? extends VerificationResult> results) {
     extension.afterAllSpecs(results);
   }
 }

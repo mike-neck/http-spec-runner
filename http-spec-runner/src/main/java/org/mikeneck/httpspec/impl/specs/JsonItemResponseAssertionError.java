@@ -23,6 +23,11 @@ public class JsonItemResponseAssertionError implements HttpResponseAssertion<Jso
   }
 
   @Override
+  public @NotNull String subtitle() {
+    return String.format("json item(%s)", path);
+  }
+
+  @Override
   public @NotNull JsonItem expected() {
     return expectedItem;
   }
