@@ -1,0 +1,38 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'kotlin-project'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.14.0'
+}
+
+sourceSets {
+    functionalTest
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':http-spec-runner-cli')
+}
+
+configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+
+gradlePlugin {
+    def p = project
+    plugins {
+        httpSpecRunnerPlugin {
+            id = 'org.mikeneck.http-spec-runner-gradle-plugin'
+            displayName = 'http spec runner plugin'
+            description = p.file('description.txt').text
+            implementationClass = 'org.mikeneck.httpspec.HttpSpecRunnerPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/mike-neck/http-spec-runner'
+    vcsUrl = 'https://github.com/mike-neck/http-spec-runner'
+    tags = ['http', 'testing', 'REST API']
+}

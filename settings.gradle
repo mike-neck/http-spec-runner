@@ -13,3 +13,6 @@ project(':kotlin').name = 'http-spec-runner-kotlin'
 
 include('cli')
 project(':cli').name = 'http-spec-runner-cli'
+
+include('gradle-plugin')
+project(':gradle-plugin').name = 'http-spec-runner-gradle-plugin'

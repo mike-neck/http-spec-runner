@@ -1,0 +1,1 @@
+Gradle plugin which runs http-spec-runner as gradle task. For more information, please visit https://github.com/mike-neck/http-spec-runner .

@@ -38,7 +38,9 @@ task ktfmt(type: JavaExec, group: 'formatter', description: 'formats kotlin sour
     args([mains, tests].flatten() as List<String>)
 }
 
-tasks.named('googleJavaFormat').configure { it.enabled = false }
+if (project.pluginManager.hasPlugin('java-project')) {
+  tasks.named('googleJavaFormat').configure { it.enabled = false }
+}
 
 test {
     useJUnitPlatform()
