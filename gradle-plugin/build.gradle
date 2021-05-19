@@ -1,5 +1,6 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'java-project'
     id 'kotlin-project'
     id 'maven-publish'
     id 'com.gradle.plugin-publish' version '0.14.0'
@@ -20,6 +21,25 @@ dependencies {
 }
 
 configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+
+task functionalTest(type: Test, group: 'verification') {
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+}
+
+task writeVersion(group: 'build', description: 'writes version information to resource') {
+    File versionFile = file("$buildDir/resources/main/plugin-version.txt")
+    doLast {
+        if (!versionFile.parentFile.exists()) {
+            versionFile.parentFile.mkdirs()
+        }
+        versionFile.write("${project.version}", 'UTF-8')
+    }
+}
+
+tasks.named('jar').configure {
+    dependsOn 'writeVersion'
+}
 
 gradlePlugin {
     def p = project
