@@ -3,6 +3,7 @@ package org.mikeneck.httpspec.impl
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.internal.file.HasScriptServices
 import org.gradle.api.tasks.Internal
@@ -11,7 +12,9 @@ import org.gradle.process.internal.ExecFactory
 import org.gradle.process.internal.ExecHandle
 import org.mikeneck.httpspec.*
 
-class DefaultHttpSpecRunnerTask(@Internal private val extension: DefaultHttpSpecRunnerExtension) :
+class DefaultHttpSpecRunnerTask
+@Inject
+constructor(@Internal private val extension: DefaultHttpSpecRunnerExtension) :
     HttpSpecRunnerTask, HttpSpecRunnerTaskProperties by extension, DefaultTask() {
 
   @TaskAction
