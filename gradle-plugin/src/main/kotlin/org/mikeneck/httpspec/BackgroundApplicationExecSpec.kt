@@ -3,6 +3,7 @@ package org.mikeneck.httpspec
 import org.gradle.api.Action
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
@@ -17,4 +18,6 @@ interface BackgroundApplicationExecSpec : Action<JavaExecSpec> {
   @get:Input val mainClass: Property<String>
 
   @get:Input val jvmArgs: ListProperty<String>
+
+  @get:Input val environment: MapProperty<String, String>
 }

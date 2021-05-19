@@ -14,7 +14,9 @@ repositories {
 }
 
 dependencies {
-    implementation project(':http-spec-runner-cli')
+    implementation project(':http-spec-runner')
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3'
 }
 
 configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)

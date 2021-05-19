@@ -1,12 +1,8 @@
 package org.mikeneck.httpspec
 
 import org.gradle.api.Action
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.tasks.OutputDirectory
 
-interface HttpSpecRunnerExtension {
-
-  @get:OutputDirectory val reportDirectory: DirectoryProperty
+interface HttpSpecRunnerExtension : HttpSpecRunnerTaskProperties {
 
   fun addSpec(specConfig: Action<HttpSpecCase>)
 
