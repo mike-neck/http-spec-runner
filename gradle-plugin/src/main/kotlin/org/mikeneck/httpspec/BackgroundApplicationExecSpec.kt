@@ -1,7 +1,7 @@
 package org.mikeneck.httpspec
 
 import org.gradle.api.Action
-import org.gradle.api.file.FileCollection
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -11,13 +11,17 @@ import org.gradle.process.JavaExecSpec
 
 interface BackgroundApplicationExecSpec : Action<JavaExecSpec> {
 
-  @get:InputFiles val classpath: FileCollection
+  @get:InputFiles val classpath: ConfigurableFileCollection
 
   @get:Input val args: ListProperty<String>
 
   @get:Input val mainClass: Property<String>
 
+  fun setMainClass(mainClass: String)
+
   @get:Input val jvmArgs: ListProperty<String>
 
   @get:Input val environment: MapProperty<String, String>
+
+  fun waitUntilGet(url: String, condition: Action<ResponseCondition>)
 }

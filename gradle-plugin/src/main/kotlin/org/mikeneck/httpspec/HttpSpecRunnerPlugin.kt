@@ -10,11 +10,8 @@ open class HttpSpecRunnerPlugin : Plugin<Project> {
     val httpSpecRunnerExtension = httpSpecRunnerExtension(project)
     project.convention.add(
         HttpSpecRunnerExtension::class.java, "httpSpecRunner", httpSpecRunnerExtension)
-    httpSpecRunnerExtension.reportDirectory.convention(
-        project
-            .objects
-            .directoryProperty()
-            .dir("${project.buildDir}/${HttpSpecRunnerExtension.DEFAULT_REPORT_DIRECTORY}"))
+    httpSpecRunnerExtension.reportDirectory.set(
+        project.file("${project.buildDir}/${HttpSpecRunnerExtension.DEFAULT_REPORT_DIRECTORY}"))
 
     val httpSpecRunnerTask =
         project.tasks.create(

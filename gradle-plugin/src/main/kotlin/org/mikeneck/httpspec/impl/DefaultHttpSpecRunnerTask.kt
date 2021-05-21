@@ -2,25 +2,28 @@ package org.mikeneck.httpspec.impl
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.internal.file.HasScriptServices
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.internal.ExecFactory
 import org.gradle.process.internal.ExecHandle
 import org.mikeneck.httpspec.*
 
-class DefaultHttpSpecRunnerTask
+open class DefaultHttpSpecRunnerTask
 @Inject
-constructor(@Internal private val extension: DefaultHttpSpecRunnerExtension) :
+constructor(private val extension: DefaultHttpSpecRunnerExtension) :
     HttpSpecRunnerTask, HttpSpecRunnerTaskProperties by extension, DefaultTask() {
 
   @TaskAction
   fun runTask() {
     val backgroundApplication = forkBackgroundApplication()
-    defer { backgroundApplication.shutdown() }.use { runHttpRunnerSpecs() }
+    defer { backgroundApplication.shutdown() }.use {
+      extension.waitApplicationReady()
+      runHttpRunnerSpecs()
+    }
   }
 
   private fun forkBackgroundApplication(): ExecHandle {
@@ -63,7 +66,7 @@ constructor(@Internal private val extension: DefaultHttpSpecRunnerExtension) :
     val specs = this.specs.get()
     val reports = specs.runAll()
     val objectMapper =
-        ObjectMapper()
+        ObjectMapper(YAMLFactory())
             .registerKotlinModule()
             .setSerializationInclusion(JsonInclude.Include.NON_NULL)
     val directory = reportDirectory.asFile.get()

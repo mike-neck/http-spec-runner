@@ -18,13 +18,25 @@ dependencies {
     implementation project(':http-spec-runner')
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3'
+
+    testImplementation 'org.assertj:assertj-core:3.19.0'
+    testImplementation project(':test-utils')
 }
 
 configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+configurations.functionalTestRuntimeOnly.extendsFrom(configurations.testRuntimeOnly)
 
 task functionalTest(type: Test, group: 'verification') {
+    useJUnitPlatform()
     classpath = sourceSets.functionalTest.runtimeClasspath
     testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    def testProjectDirectoryParent = file("$buildDir/functional-tests")
+    environment('PROJECT_PARENT', testProjectDirectoryParent)
+    dependsOn 'removeFunctionalTestOutput'
+}
+
+task removeFunctionalTestOutput(type: Delete) {
+    delete file("$buildDir/functional-tests")
 }
 
 task writeVersion(group: 'build', description: 'writes version information to resource') {

@@ -1,6 +1,7 @@
 package org.mikeneck.httpspec.file.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.ObjLongConsumer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ObjectNodeOperator {
 
@@ -16,6 +18,18 @@ public class ObjectNodeOperator {
 
   ObjectNodeOperator(@NotNull ObjectNode node) {
     this.node = node;
+  }
+
+  ObjectNodeOperator() {
+    this.node = new ObjectNode(new JsonNodeFactory(false));
+  }
+
+  static ObjectNodeOperator fromNullable(@Nullable ObjectNode node) {
+    if (node == null) {
+      return new ObjectNodeOperator();
+    } else {
+      return new ObjectNodeOperator(node);
+    }
   }
 
   @NotNull
