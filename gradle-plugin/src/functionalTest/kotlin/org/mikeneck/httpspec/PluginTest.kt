@@ -31,10 +31,13 @@ dependencies {
   implementation 'com.google.guava:guava:30.1.1-jre'
 }
 
+ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream()
+
 httpSpecRunner {
   runInBackground {
     it.classpath.from(sourceSets.main.runtimeClasspath)
     it.mainClass = 'com.example.Main'
+    it.stdout = byteOutputStream
     it.waitUntilGet('http://localhost:8800/health') { condition ->
       condition.status = 200
       condition.retryStrategy = [1000L, 2000L, 4000L, 8000L, 16000L, 32000L]
@@ -48,8 +51,16 @@ httpSpecRunner {
 
 tasks.named('http-spec-runner').configure {
   it.dependsOn 'classes'
+  doLast {
+    byte[] bytes = byteOutputStream.toByteArray()
+    //noinspection GroovyUnusedAssignment
+    File dir = reportDirectory.asFile.get() as File
+    File logFile = file("${'$'}dir/server-log.txt")
+    logFile.withOutputStream { it.write(bytes) }
+  }
 }
-"""),
+"""
+        ),
         File(
             path = "src/main/java/com/example/Main.java",
             //language=java
@@ -166,6 +177,7 @@ spec:
         assertAll(
             { assertThat(result.successTaskPaths()).contains(":compileJava", ":http-spec-runner") },
             { assertThat(testProject.file("build/http-spec-runner")).exists().isDirectory() },
+            { assertThat(testProject.file("build/http-spec-runner/server-log.txt")).exists().canRead() },
             { assertThat(testProject.file("build/http-spec-runner/single.yml")).exists().canRead() }
         )
     }

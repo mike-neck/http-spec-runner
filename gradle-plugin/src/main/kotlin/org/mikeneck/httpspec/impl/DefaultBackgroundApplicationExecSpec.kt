@@ -1,6 +1,7 @@
 package org.mikeneck.httpspec.impl
 
 import java.io.IOException
+import java.io.OutputStream
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -23,6 +24,7 @@ class DefaultBackgroundApplicationExecSpec(
     override val mainClass: Property<String>,
     override val jvmArgs: ListProperty<String>,
     override val environment: MapProperty<String, String>,
+    private val out: Property<OutputStream>,
     @get:Internal val waitUrl: Property<String>,
     @get:Internal val conditions: ListProperty<WaitCondition>,
     @get:Internal val retryStrategy: Property<RequestRetryStrategy>
@@ -33,6 +35,11 @@ class DefaultBackgroundApplicationExecSpec(
   override fun setMainClass(mainClass: String) {
     this.mainClass.set(mainClass)
   }
+
+  @get:Internal
+  override var stdout: OutputStream
+    get() = out.get()
+    set(output) = this.out.set(output)
 
   override fun waitUntilGet(url: String, condition: Action<ResponseCondition>) {
     this.waitUrl.set(url)
@@ -61,6 +68,9 @@ class DefaultBackgroundApplicationExecSpec(
     javaExec.jvmArgs(jvmArgs.get())
     javaExec.args(args.get())
     javaExec.environment(environment.get())
+    if (out.isPresent) {
+      javaExec.standardOutput = out.get()
+    }
   }
 
   fun waitApplicationReady() {
@@ -130,6 +140,7 @@ class DefaultBackgroundApplicationExecSpec(
             objectFactory.property(),
             objectFactory.listProperty(),
             objectFactory.mapProperty(),
+            objectFactory.property(),
             objectFactory.property(),
             objectFactory.listProperty(),
             objectFactory.property())
