@@ -35,6 +35,18 @@ task functionalTest(type: Test, group: 'verification') {
     dependsOn 'removeFunctionalTestOutput'
 }
 
+if (runningOnGitHubActions as boolean) {
+    task moveFunctionalTestReport(type: Copy, group: 'verification', description: 'copies functional test report to github action archive') {
+        from tasks.withType(Test).named('functionalTest').map { Test t ->
+            t.reports.html.outputLocation
+        }
+        into "${rootProject.buildDir}/reports/${project.name}-functional-test"
+    }
+    tasks.named('functionalTest').configure { Task t ->
+        t.finalizedBy 'moveFunctionalTestReport'
+    }
+}
+
 task removeFunctionalTestOutput(type: Delete) {
     delete file("$buildDir/functional-tests")
 }
