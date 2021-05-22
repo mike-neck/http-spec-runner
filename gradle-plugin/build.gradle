@@ -1,0 +1,84 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'java-project'
+    id 'kotlin-project'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.14.0'
+}
+
+sourceSets {
+    functionalTest
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':http-spec-runner')
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.12.3'
+
+    testImplementation 'org.assertj:assertj-core:3.19.0'
+    testImplementation project(':test-utils')
+}
+
+configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+configurations.functionalTestRuntimeOnly.extendsFrom(configurations.testRuntimeOnly)
+
+task functionalTest(type: Test, group: 'verification') {
+    useJUnitPlatform()
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    def testProjectDirectoryParent = file("$buildDir/functional-tests")
+    environment('PROJECT_PARENT', testProjectDirectoryParent)
+    dependsOn 'removeFunctionalTestOutput'
+}
+
+if (runningOnGitHubActions as boolean) {
+    task moveFunctionalTestReport(type: Copy, group: 'verification', description: 'copies functional test report to github action archive') {
+        from tasks.withType(Test).named('functionalTest').map { Test t ->
+            t.reports.html.outputLocation
+        }
+        into "${rootProject.buildDir}/reports/${project.name}-functional-test"
+    }
+    tasks.named('functionalTest').configure { Task t ->
+        t.finalizedBy 'moveFunctionalTestReport'
+    }
+}
+
+task removeFunctionalTestOutput(type: Delete) {
+    delete file("$buildDir/functional-tests")
+}
+
+task writeVersion(group: 'build', description: 'writes version information to resource') {
+    File versionFile = file("$buildDir/resources/main/plugin-version.txt")
+    doLast {
+        if (!versionFile.parentFile.exists()) {
+            versionFile.parentFile.mkdirs()
+        }
+        versionFile.write("${project.version}", 'UTF-8')
+    }
+}
+
+tasks.named('jar').configure {
+    dependsOn 'writeVersion'
+}
+
+gradlePlugin {
+    def p = project
+    plugins {
+        httpSpecRunnerPlugin {
+            id = 'org.mikeneck.http-spec-runner-gradle-plugin'
+            displayName = 'http spec runner plugin'
+            description = p.file('description.txt').text
+            implementationClass = 'org.mikeneck.httpspec.HttpSpecRunnerPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/mike-neck/http-spec-runner'
+    vcsUrl = 'https://github.com/mike-neck/http-spec-runner'
+    tags = ['http', 'testing', 'REST API']
+}

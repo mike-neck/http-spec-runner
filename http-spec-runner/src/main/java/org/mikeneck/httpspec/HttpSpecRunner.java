@@ -19,6 +19,7 @@ public interface HttpSpecRunner {
                 new IllegalStateException("Implementation of HttpSpecRunner.Builder is not found"));
   }
 
+  @NotNull
   static HttpSpecRunner from(@NotNull File yamlFile) {
     @SuppressWarnings("NullableProblems")
     Client client = HttpClient::newHttpClient;
@@ -26,16 +27,19 @@ public interface HttpSpecRunner {
   }
 
   @SuppressWarnings("NullableProblems")
+  @NotNull
   static HttpSpecRunner from(@NotNull File yamlFile, @NotNull Extension extension) {
     @SuppressWarnings("NullableProblems")
     Client client = HttpClient::newHttpClient;
     return from(yamlFile, client, extension);
   }
 
+  @NotNull
   static HttpSpecRunner from(@NotNull File yamlFile, @NotNull Client client) {
     return from(yamlFile, client, Extension.noOp());
   }
 
+  @NotNull
   static HttpSpecRunner from(
       @NotNull File yamlFile, @NotNull Client client, @NotNull Extension extension) {
     ServiceLoader<FileLoader> serviceLoader = ServiceLoader.load(FileLoader.class);

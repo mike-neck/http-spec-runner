@@ -33,7 +33,7 @@ jobs:
           restore-keys: gradle.caches-
 
       - name: Run Tests
-        run: ./gradlew test
+        run: ./gradlew test functionalTest
         env: 
           RUN_ON_GITHUB_ACTIONS: "yes"
 
